@@ -5,6 +5,7 @@ extern class Shim {
 }
 
 class Main {
+    static private var mapGen:map.Generator = new map.Generator();
     static function main() {
         Shim.canvas.width = js.Browser.window.innerWidth;
         Shim.canvas.height = js.Browser.window.innerHeight;
