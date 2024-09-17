@@ -67,7 +67,10 @@ void main() {
     vec3 position;
     vec3 normal;
 
-    int vertexIndex = gl_VertexID;
+    int indices[6] = int[6](0, 1, 2, 2, 3, 0);
+    int i = gl_VertexID % 6;
+
+    int vertexIndex = int(gl_VertexID / 6) + indices[i];
 
     position = uPositions[vertexIndex].xyz;
 

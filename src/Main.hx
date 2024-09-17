@@ -127,39 +127,26 @@ class Main {
         Shim.g.enable(Shim.g.DEPTH_TEST);
         Shim.g.disable(Shim.g.CULL_FACE);
         var timeUniformLocation = Shim.g.getUniformLocation(program, "uTime");
-        var numCubes = 4096 * 4;
-        var data = new js.lib.Uint32Array(numCubes);
-        var dataLen = 0;
-        inline function addCube(x:Int, y:Int, z:Int) {
-            data[dataLen] = x | (y << 8) | (z << 16);
-            ++dataLen;
-        }
-        var size = 30;
-
-        for(x in 0...size) {
-            for(z in 0...size) {
-                addCube(x, 0, z);
-
-                if(Math.random() > 0.9) {
-                    var h = Std.int(Math.random() * 4);
-
-                    for(y in 1...h) {
-                        addCube(x, y, z);
-                    }
-                }
-            }
-        }
+        var size = 3;
 
         {
             var buffer = new DataBuffer();
-            buffer.setPosition(0, -20, 0, -20);
-            buffer.setPosition(1, 20, 0, -20);
-            buffer.setPosition(2, 20, 0, 20);
-            buffer.setPosition(3, -20, 0, 20);
+            buffer.setPosition(0, -size, 0, -size);
+            buffer.setPosition(1, size, 0, -size);
+            buffer.setPosition(2, size, 0, size);
+            buffer.setPosition(3, -size, 0, size);
             buffer.setTexCoord(0, 0, 0);
             buffer.setTexCoord(1, 1, 0);
             buffer.setTexCoord(2, 1, 1);
             buffer.setTexCoord(3, 0, 1);
+            var map = mapGen.generate();
+            trace(map.walls.length);
+            var i = 2;
+
+            for(wall in map.walls) {
+                ++i;
+            }
+
             var ubo = Shim.g.createBuffer();
             Shim.g.bindBuffer(Shim.g.UNIFORM_BUFFER, ubo);
             Shim.g.bufferData(Shim.g.UNIFORM_BUFFER, buffer, Shim.g.STATIC_DRAW);
@@ -317,7 +304,7 @@ class Main {
                 Shim.g.uniform1f(globalPitchUniformLocation, globalPitch);
                 Shim.g.uniform1i(useCameraUniformLocation, 1);
                 Shim.g.uniform1f(scaleUniformLocation, 1.0);
-                draw(4);
+                draw(6);
             }
 
             mouseMove[0] = mouseMove[1] = 0;

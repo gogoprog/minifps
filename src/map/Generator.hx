@@ -137,7 +137,7 @@ class Generator {
     }
 
     static private function tryAdd(map:Map, rect:Rectangle, parent:Zone, tile:ZoneType) {
-        if(untyped Phaser.Geom.Rectangle.ContainsRect(map.rect, rect)) {
+        if(map.rect.contains(rect)) {
             if(!isValid(rect, parent, map.rects)) {
                 map.addZone(parent, rect, tile);
                 return true;

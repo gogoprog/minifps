@@ -31,4 +31,12 @@ abstract Rectangle(Array<Float>) from Array<Float> to Array<Float> {
 
     public var right(get, never):Float;
     inline function get_right() return x + width;
+
+    public function contains(rect:Rectangle) {
+        if(rect.width <= 0 || rect.height <= 0) {
+            return rect.x > x && rect.y > y && rect.right < right && rect.bottom < bottom;
+        }
+
+        return rect.x >= x && rect.y >= y && rect.right <= right && rect.bottom <= bottom;
+    }
 }
