@@ -15,10 +15,7 @@ uniform float uCameraPitch;
 uniform float uGlobalYaw;
 uniform float uGlobalPitch;
 uniform bool uUseCamera;
-uniform bool uSphere;
 uniform float uScale;
-
-uniform vec3 uSpheres[512];
 
 const float fov = radians(60.0);
 const float near = 0.1;
@@ -78,35 +75,23 @@ void main() {
     vec3 position;
     vec3 normal;
 
-    if (uSphere) {
-        int sphereIndex = int(gl_VertexID / 60);
-        int vertexIndex = sphereIndices[gl_VertexID % 60];
-        position = sphereVertices[vertexIndex];
-        normal = normalize(position);
-        position *= uScale;
+    int cubeIndex = int(gl_VertexID / 36);
+    int faceIndex = int((gl_VertexID % 36) / 6);
+    int vertexIndex = cubeIndices[gl_VertexID % 36];
+    position = cubeVertices[vertexIndex];
 
-        position += uSpheres[sphereIndex];
+    vVertex = position;
 
-        vVertex = position;
-    } else {
-        int cubeIndex = int(gl_VertexID / 36);
-        int faceIndex = int((gl_VertexID % 36) / 6);
-        int vertexIndex = cubeIndices[gl_VertexID % 36];
-        position = cubeVertices[vertexIndex];
+    int value = int(uData[int(cubeIndex / 4)][cubeIndex % 4]);
+    float x = float(value & 255);
+    float y = float((value >> 8) & 255);
+    float z = float((value >> 16) & 255);
 
-        vVertex = position;
+    position = position + vec3(x, y, z);
 
-        int value = int(uData[int(cubeIndex / 4)][cubeIndex % 4]);
-        float x = float(value & 255);
-        float y = float((value >> 8) & 255);
-        float z = float((value >> 16) & 255);
+    position *= uScale;
 
-        position = position + vec3(x, y, z);
-
-        position *= uScale;
-
-        normal = cubeNormals[faceIndex];
-    }
+    normal = cubeNormals[faceIndex];
 
     float cosYaw = cos(uGlobalYaw);
     float sinYaw = sin(uGlobalYaw);

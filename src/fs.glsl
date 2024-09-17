@@ -103,18 +103,22 @@ void main() {
         abs(adjustedUV.y - center.y) < crosshairThickness && abs(adjustedUV.x - center.x) < crosshairSize) {
         fragColor = vec4(1.0, 0.0, 0.0, 1.0);
     } else {
-        float lum = 0.299 * litColor.r + 0.587 * litColor.g + 0.114 * litColor.b;
+        float val = 0.299 * litColor.r + 0.587 * litColor.g + 0.114 * litColor.b;
 
-        if (lum > 0.6) {
-            lum = 1.0;
-        } else if (lum < 0.4) {
-            lum = 0.0;
+        if (val > 0.6) {
+            val = 1.0;
+        } else if (val < 0.4) {
+            val = 0.0;
         } else {
-            lum = float(int(gl_FragCoord.x + gl_FragCoord.y) % int(10.0*lum));
+            val = float(int(gl_FragCoord.x + gl_FragCoord.y) % int(10.0 * val));
 
-            lum = lum > 0.5 ? 1.0 : 0.0;
+            val = val > 0.5 ? 1.0 : 0.0;
         }
 
-        fragColor = vec4(lum, lum, lum, 1.0);
+        if (val == 1.0f) {
+            fragColor = vec4(0.87, 0.97, 0.80, 1.0);
+        } else {
+            fragColor = vec4(0.04, 0.1, 0.1, 1.0);
+        }
     }
 }
