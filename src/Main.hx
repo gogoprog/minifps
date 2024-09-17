@@ -4,6 +4,25 @@ extern class Shim {
     @:native("g") static var g:Dynamic;
 }
 
+abstract DataBuffer(js.lib.Float32Array) from js.lib.Float32Array to js.lib.Float32Array {
+    static inline var count = 1024;
+    public function new() {
+        this = new js.lib.Float32Array(count * 4 * 3);
+    }
+
+    public function setPosition(i, x, y, z) {
+        this[i * 4 + 0] = x;
+        this[i * 4 + 1] = y;
+        this[i * 4 + 2] = z;
+    }
+
+    public function setTexCoord(i, u, v) {
+        this[count * 2 * 4 + i * 4 + 0] = u;
+        this[count * 2 * 4 + i * 4 + 1] = v;
+    }
+
+}
+
 class Main {
     var mapGen:map.Generator = new map.Generator();
     var time:Int = 0;
@@ -131,38 +150,16 @@ class Main {
             }
         }
 
-
         {
-            var buffer = new js.lib.Float32Array(1024 * 4 * 3);
-
-            buffer[0] = -20;
-            buffer[1] = 0;
-            buffer[0] = -20;
-
-            buffer[4] = 20;
-            buffer[5] = 0;
-            buffer[6] = -20;
-
-            buffer[8] = 20;
-            buffer[9] = 0;
-            buffer[10] = 20;
-
-            buffer[12] = -20;
-            buffer[13] = 0;
-            buffer[14] = 20;
-
-            buffer[2048 * 4 + 0] = 0;
-            buffer[2048 * 4 + 1] = 0;
-
-            buffer[2048 * 4 + 4] = 1;
-            buffer[2048 * 4 + 5] = 0;
-
-            buffer[2048 * 4 + 8] = 1;
-            buffer[2048 * 4 + 9] = 1;
-
-            buffer[2048 * 4 + 12] = 0;
-            buffer[2048 * 4 + 13] = 1;
-
+            var buffer = new DataBuffer();
+            buffer.setPosition(0, -20, 0, -20);
+            buffer.setPosition(1, 20, 0, -20);
+            buffer.setPosition(2, 20, 0, 20);
+            buffer.setPosition(3, -20, 0, 20);
+            buffer.setTexCoord(0, 0, 0);
+            buffer.setTexCoord(1, 1, 0);
+            buffer.setTexCoord(2, 1, 1);
+            buffer.setTexCoord(3, 0, 1);
             var ubo = Shim.g.createBuffer();
             Shim.g.bindBuffer(Shim.g.UNIFORM_BUFFER, ubo);
             Shim.g.bufferData(Shim.g.UNIFORM_BUFFER, buffer, Shim.g.STATIC_DRAW);
