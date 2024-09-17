@@ -196,7 +196,8 @@ class Main {
             t /= 1000;
             var deltaTime = t - lastTime;
             lastTime = t;
-            // Shim.g.clear(Shim.g.COLOR_BUFFER_BIT | Shim.g.DEPTH_BUFFER_BIT);
+            Shim.g.clearColor(0.87, 0.97, 0.80, 1.0);
+            Shim.g.clear(Shim.g.COLOR_BUFFER_BIT | Shim.g.DEPTH_BUFFER_BIT);
             Shim.g.uniform1f(timeUniformLocation, t);
             var moveSpeed = 0.8;
             var mouseSensitivity = 0.002;
