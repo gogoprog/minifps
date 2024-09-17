@@ -5,9 +5,8 @@ uniform vec2 uResolution;
 uniform float uScale;
 uniform float uCameraYaw;
 uniform float uCameraPitch;
-uniform bool uSphere;
 
-in vec3 vVertex;
+in vec2 vCoords;
 in vec3 vNormal;
 out vec4 fragColor;
 
@@ -41,52 +40,15 @@ void main() {
     float diff = max(dot(normalize(vNormal), lightDir), 0.0);
     vec3 litColor;
 
-    if (uScale >= 999.0) {
-        vec2 uv = gl_FragCoord.xy / uResolution;
-        uv.x -= uCameraYaw * 0.5;
-        uv.y -= uCameraPitch;
+    vec3 baseColor;
+    float squareSize = 0.001;
+    vec2 squarePos = floor(vCoords.xy / squareSize);
+    float random = fract(sin(dot(squarePos, vec2(12.9898, 78.233))) * 43758.5453);
+    vec3 light = vec3(0.2, 0.2, 0.0);
+    vec3 dark = vec3(0.8, 0.3, 0.0);
+    baseColor = mix(light, dark, step(0.5, random));
 
-        float cloudNoise = fbm(uv * 2.0);
-        float cloudShape = smoothstep(0.4, 0.6, cloudNoise);
-        float cloudDensity = smoothstep(0.1, 0.3, cloudNoise) * 0.1 + cloudShape * 0.2;
-        vec3 skyColorTop = vec3(0.4, 0.6, 1.0);
-        vec3 skyColorBottom = vec3(0.7, 0.8, 1.0);
-        vec3 cloudColor = vec3(1.0);
-        vec3 skyColor = mix(skyColorBottom, skyColorTop, uv.y);
-
-        litColor = mix(skyColor, cloudColor, cloudDensity);
-    } else if (uScale < 0.1) {
-        litColor = vec3(0.2, 0.1, 0.1);
-
-    } else {
-        vec3 baseColor;
-        if (vVertex.y > sin((vVertex.x + vVertex.z) * 30.0) * 0.1) {
-            float squareSize = 0.01;
-            vec3 squarePos = floor(vVertex.xyz / squareSize);
-            float random = fract(sin(dot(squarePos, vec3(12.9898, 78.233, 37.67))) * 43758.5453);
-            vec3 light = vec3(0.1, 0.8, 0.2);
-            vec3 dark = vec3(0.1, 0.6, 0.2);
-            baseColor = mix(light, dark, step(0.5, random));
-        } else {
-            float squareSize = 0.1;
-            vec3 squarePos = floor(vVertex.xyz / squareSize);
-            float random = fract(sin(dot(squarePos, vec3(12.9898, 78.233, 37.67))) * 43758.5453);
-            vec3 light = vec3(0.4, 0.2, 0.0);
-            vec3 dark = vec3(0.6, 0.3, 0.0);
-            baseColor = mix(light, dark, step(0.5, random));
-        }
-
-        if (uSphere) {
-            float squareSize = 0.1;
-            vec3 squarePos = floor(vVertex.xyz / squareSize);
-            float random = fract(sin(dot(squarePos, vec3(12.9898, 78.233, 37.67))) * 43758.5453);
-            vec3 light = vec3(0.4, 0.0, 0.0);
-            vec3 dark = vec3(0.6, 0.0, 0.0);
-            baseColor = mix(light, dark, step(0.5, random));
-        }
-
-        litColor = ambient + baseColor * (diff * 0.6 + 0.4);
-    }
+    litColor = ambient + baseColor * (diff * 0.6 + 0.4);
 
     vec2 uv = gl_FragCoord.xy / uResolution;
     vec2 center = vec2(0.5, 0.5);
@@ -120,5 +82,7 @@ void main() {
         } else {
             fragColor = vec4(0.04, 0.1, 0.1, 1.0);
         }
+
+        fragColor = vec4(litColor, 1.0);
     }
 }

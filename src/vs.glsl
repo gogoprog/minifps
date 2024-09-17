@@ -1,11 +1,13 @@
 #version 300 es
 precision highp float;
 
-out vec3 vVertex;
+out vec2 vCoords;
 out vec3 vNormal;
 
-layout(std140) uniform CubeData {
-    ivec4 uData[4096];
+layout(std140) uniform Data {
+    vec4 uPositions[1024];
+    vec4 uNormals[1024];
+    vec4 uTexCoords[1024];
 };
 
 uniform vec2 uResolution;
@@ -61,37 +63,19 @@ mat4 computeViewMatrix() {
                 -dot(xaxis, cameraPosition), -dot(yaxis, cameraPosition), -dot(zaxis, cameraPosition), 1.0);
 }
 
-const vec3 sphereVertices[12] = vec3[](
-    vec3(0.0, 1.0, 0.0), vec3(0.894427, 0.447214, 0.0), vec3(0.276393, 0.447214, 0.850651),
-    vec3(-0.723607, 0.447214, 0.525731), vec3(-0.723607, 0.447214, -0.525731), vec3(0.276393, 0.447214, -0.850651),
-    vec3(0.0, -1.0, 0.0), vec3(-0.894427, -0.447214, 0.0), vec3(-0.276393, -0.447214, -0.850651),
-    vec3(0.723607, -0.447214, -0.525731), vec3(0.723607, -0.447214, 0.525731), vec3(-0.276393, -0.447214, 0.850651));
-
-const int sphereIndices[60] =
-    int[](0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 1, 1, 10, 2, 2, 11, 3, 3, 7, 4, 4, 8, 5, 5, 9, 1, 6, 7, 8, 6, 8, 9,
-          6, 9, 10, 6, 10, 11, 6, 11, 7, 1, 9, 10, 2, 10, 11, 3, 11, 7, 4, 7, 8, 5, 8, 9);
-
 void main() {
     vec3 position;
     vec3 normal;
 
-    int cubeIndex = int(gl_VertexID / 36);
-    int faceIndex = int((gl_VertexID % 36) / 6);
-    int vertexIndex = cubeIndices[gl_VertexID % 36];
-    position = cubeVertices[vertexIndex];
+    int vertexIndex = gl_VertexID;
 
-    vVertex = position;
-
-    int value = int(uData[int(cubeIndex / 4)][cubeIndex % 4]);
-    float x = float(value & 255);
-    float y = float((value >> 8) & 255);
-    float z = float((value >> 16) & 255);
-
-    position = position + vec3(x, y, z);
+    position = uPositions[vertexIndex].xyz;
 
     position *= uScale;
 
-    normal = cubeNormals[faceIndex];
+    normal = uNormals[vertexIndex].xyz;
+
+    vCoords = uTexCoords[vertexIndex].xy;
 
     float cosYaw = cos(uGlobalYaw);
     float sinYaw = sin(uGlobalYaw);

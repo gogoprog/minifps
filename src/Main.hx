@@ -108,7 +108,6 @@ class Main {
         Shim.g.enable(Shim.g.DEPTH_TEST);
         Shim.g.disable(Shim.g.CULL_FACE);
         var timeUniformLocation = Shim.g.getUniformLocation(program, "uTime");
-        var dataLoc = Shim.g.getUniformLocation(program, "uData");
         var numCubes = 4096 * 4;
         var data = new js.lib.Uint32Array(numCubes);
         var dataLen = 0;
@@ -132,62 +131,59 @@ class Main {
             }
         }
 
-        var ubo = Shim.g.createBuffer();
-        Shim.g.bindBuffer(Shim.g.UNIFORM_BUFFER, ubo);
-        Shim.g.bufferData(Shim.g.UNIFORM_BUFFER, data, Shim.g.STATIC_DRAW);
-        Shim.g.bindBuffer(Shim.g.UNIFORM_BUFFER, null);
-        var uboIndex = Shim.g.getUniformBlockIndex(program, "CubeData");
-        Shim.g.uniformBlockBinding(program, uboIndex, 0);
-        Shim.g.bindBufferBase(Shim.g.UNIFORM_BUFFER, 0, ubo);
+
+        {
+            var buffer = new js.lib.Float32Array(1024 * 4 * 3);
+
+            buffer[0] = -20;
+            buffer[1] = 0;
+            buffer[0] = -20;
+
+            buffer[4] = 20;
+            buffer[5] = 0;
+            buffer[6] = -20;
+
+            buffer[8] = 20;
+            buffer[9] = 0;
+            buffer[10] = 20;
+
+            buffer[12] = -20;
+            buffer[13] = 0;
+            buffer[14] = 20;
+
+            buffer[2048 * 4 + 0] = 0;
+            buffer[2048 * 4 + 1] = 0;
+
+            buffer[2048 * 4 + 4] = 1;
+            buffer[2048 * 4 + 5] = 0;
+
+            buffer[2048 * 4 + 8] = 1;
+            buffer[2048 * 4 + 9] = 1;
+
+            buffer[2048 * 4 + 12] = 0;
+            buffer[2048 * 4 + 13] = 1;
+
+            var ubo = Shim.g.createBuffer();
+            Shim.g.bindBuffer(Shim.g.UNIFORM_BUFFER, ubo);
+            Shim.g.bufferData(Shim.g.UNIFORM_BUFFER, buffer, Shim.g.STATIC_DRAW);
+            Shim.g.bindBuffer(Shim.g.UNIFORM_BUFFER, null);
+            var uboIndex = Shim.g.getUniformBlockIndex(program, "Data");
+            Shim.g.uniformBlockBinding(program, uboIndex, 0);
+            Shim.g.bindBufferBase(Shim.g.UNIFORM_BUFFER, 0, ubo);
+        }
+
         var cameraPositionUniformLocation = Shim.g.getUniformLocation(program, "uCameraPosition");
         var cameraYawUniformLocation = Shim.g.getUniformLocation(program, "uCameraYaw");
         var cameraPitchUniformLocation = Shim.g.getUniformLocation(program, "uCameraPitch");
         var globalYawUniformLocation = Shim.g.getUniformLocation(program, "uGlobalYaw");
         var globalPitchUniformLocation = Shim.g.getUniformLocation(program, "uGlobalPitch");
         var useCameraUniformLocation = Shim.g.getUniformLocation(program, "uUseCamera");
-        var useSphereUniformLocation = Shim.g.getUniformLocation(program, "uSphere");
         var scaleUniformLocation = Shim.g.getUniformLocation(program, "uScale");
         var resolutionUniformLocation = Shim.g.getUniformLocation(program, "uResolution");
         Shim.g.uniform2f(resolutionUniformLocation, Shim.canvas.width, Shim.canvas.height);
         playerPosition = [size/2, 10.0, size/2];
         function checkCollision(x:Float, y:Float, z:Float):Bool {
-
             if(y < 1) { return true; }
-
-            var ix = Math.floor(x);
-            var iy = Math.floor(y);
-            var iz = Math.floor(z);
-            var playerRadius = 0.4;
-
-            for(dx in -1...2) {
-                for(dy in -1...2) {
-                    for(dz in -1...2) {
-                        var cx = ix + dx;
-                        var cy = iy + dy;
-                        var cz = iz + dz;
-
-                        if(cy >= 0 && cy < size * 2) {
-                            for(i in 0...dataLen) {
-                                var cubeData = data[i];
-                                var cubeX = cubeData & 0xFF;
-                                var cubeY = (cubeData >> 8) & 0xFF;
-                                var cubeZ = (cubeData >> 16) & 0xFF;
-
-                                if(cubeX == cx && cubeY == cy && cubeZ == cz) {
-                                    var dx = Math.max(Math.abs(x - cubeX) - 0.5, 0);
-                                    var dy = Math.max(Math.abs(y - cubeY) - 0.5, 0);
-                                    var dz = Math.max(Math.abs(z - cubeZ) - 0.5, 0);
-                                    var distance = dx*dx + dy*dy + dz*dz;
-
-                                    if(distance < playerRadius * playerRadius) {
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
 
             return false;
         }
@@ -313,10 +309,9 @@ class Main {
 
             {
                 // Skybox
-                Shim.g.uniform1i(useSphereUniformLocation, 0);
                 Shim.g.uniform1i(useCameraUniformLocation, 0);
                 Shim.g.uniform1f(scaleUniformLocation, 1000.0);
-                draw(36);
+                // draw(36);
             }
 
             {
@@ -325,7 +320,7 @@ class Main {
                 Shim.g.uniform1f(globalPitchUniformLocation, globalPitch);
                 Shim.g.uniform1i(useCameraUniformLocation, 1);
                 Shim.g.uniform1f(scaleUniformLocation, 1.0);
-                draw(numCubes * 36);
+                draw(4);
             }
 
             mouseMove[0] = mouseMove[1] = 0;
