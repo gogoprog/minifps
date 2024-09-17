@@ -41,7 +41,7 @@ void main() {
     vec3 litColor;
 
     vec3 baseColor;
-    float squareSize = 0.001;
+    float squareSize = 0.1;
     vec2 squarePos = floor(vCoords.xy / squareSize);
     float random = fract(sin(dot(squarePos, vec2(12.9898, 78.233))) * 43758.5453);
     vec3 light = vec3(0.2, 0.2, 0.0);
@@ -50,39 +50,23 @@ void main() {
 
     litColor = ambient + baseColor * (diff * 0.6 + 0.4);
 
-    vec2 uv = gl_FragCoord.xy / uResolution;
-    vec2 center = vec2(0.5, 0.5);
-    float crosshairSize = 0.01;
-    float crosshairThickness = 0.002;
+    float val = 0.299 * litColor.r + 0.587 * litColor.g + 0.114 * litColor.b;
 
-    // Calculate aspect ratio
-    float aspectRatio = uResolution.x / uResolution.y;
-
-    // Adjust UV coordinates for aspect ratio
-    vec2 adjustedUV = (uv - center) * vec2(aspectRatio, 1.0) + center;
-
-    if (abs(adjustedUV.x - center.x) < crosshairThickness && abs(adjustedUV.y - center.y) < crosshairSize ||
-        abs(adjustedUV.y - center.y) < crosshairThickness && abs(adjustedUV.x - center.x) < crosshairSize) {
-        fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    if (val > 0.6) {
+        val = 1.0;
+    } else if (val < 0.4) {
+        val = 0.0;
     } else {
-        float val = 0.299 * litColor.r + 0.587 * litColor.g + 0.114 * litColor.b;
+        val = float(int(gl_FragCoord.x + gl_FragCoord.y) % int(10.0 * val));
 
-        if (val > 0.6) {
-            val = 1.0;
-        } else if (val < 0.4) {
-            val = 0.0;
-        } else {
-            val = float(int(gl_FragCoord.x + gl_FragCoord.y) % int(10.0 * val));
-
-            val = val > 0.5 ? 1.0 : 0.0;
-        }
-
-        if (val == 1.0f) {
-            fragColor = vec4(0.87, 0.97, 0.80, 1.0);
-        } else {
-            fragColor = vec4(0.04, 0.1, 0.1, 1.0);
-        }
-
-        fragColor = vec4(litColor, 1.0);
+        val = val > 0.5 ? 1.0 : 0.0;
     }
+
+    if (val == 1.0f) {
+        fragColor = vec4(0.87, 0.97, 0.80, 1.0);
+    } else {
+        fragColor = vec4(0.04, 0.1, 0.1, 1.0);
+    }
+
+    // fragColor = vec4(litColor, 1.0);
 }

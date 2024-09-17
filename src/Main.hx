@@ -46,7 +46,7 @@ class Main {
     var isOnGround = false;
     var acceleration = 20.0;
     var deceleration = 10.0;
-    var maxSpeed = 4.0;
+    var maxSpeed = 40.0;
 
     function new() {
         Shim.canvas.width = 512;
@@ -127,8 +127,8 @@ class Main {
         Shim.g.enable(Shim.g.DEPTH_TEST);
         Shim.g.disable(Shim.g.CULL_FACE);
         var timeUniformLocation = Shim.g.getUniformLocation(program, "uTime");
-        var size = 3;
-
+        var size = 1;
+        var map = mapGen.generate();
         {
             var buffer = new DataBuffer();
             buffer.setPosition(0, -size, 0, -size);
@@ -139,13 +139,22 @@ class Main {
             buffer.setTexCoord(1, 1, 0);
             buffer.setTexCoord(2, 1, 1);
             buffer.setTexCoord(3, 0, 1);
-            var map = mapGen.generate();
             trace(map.walls.length);
-            var i = 2;
+            var i = 4;
 
-            for(wall in map.walls) {
-                ++i;
+            for(w in map.walls) {
+                buffer.setPosition(i+0, w.x1, 0, w.y1);
+                buffer.setPosition(i+1, w.x2, 0, w.y2);
+                buffer.setPosition(i+2, w.x2, 2, w.y2);
+                buffer.setPosition(i+3, w.x1, 2, w.y1);
+                buffer.setTexCoord(i+0, 0, 0);
+                buffer.setTexCoord(i+1, 1 * w.getLength(), 0);
+                buffer.setTexCoord(i+2, 1 * w.getLength(), 1);
+                buffer.setTexCoord(i+3, 0, 1);
+                i+=4;
             }
+
+            trace(i);
 
             var ubo = Shim.g.createBuffer();
             Shim.g.bindBuffer(Shim.g.UNIFORM_BUFFER, ubo);
@@ -155,7 +164,6 @@ class Main {
             Shim.g.uniformBlockBinding(program, uboIndex, 0);
             Shim.g.bindBufferBase(Shim.g.UNIFORM_BUFFER, 0, ubo);
         }
-
         var cameraPositionUniformLocation = Shim.g.getUniformLocation(program, "uCameraPosition");
         var cameraYawUniformLocation = Shim.g.getUniformLocation(program, "uCameraYaw");
         var cameraPitchUniformLocation = Shim.g.getUniformLocation(program, "uCameraPitch");
@@ -304,7 +312,7 @@ class Main {
                 Shim.g.uniform1f(globalPitchUniformLocation, globalPitch);
                 Shim.g.uniform1i(useCameraUniformLocation, 1);
                 Shim.g.uniform1f(scaleUniformLocation, 1.0);
-                draw(6);
+                draw(6 + map.walls.length * 6);
             }
 
             mouseMove[0] = mouseMove[1] = 0;

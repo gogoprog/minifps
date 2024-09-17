@@ -70,7 +70,7 @@ void main() {
     int indices[6] = int[6](0, 1, 2, 2, 3, 0);
     int i = gl_VertexID % 6;
 
-    int vertexIndex = int(gl_VertexID / 6) + indices[i];
+    int vertexIndex = int(gl_VertexID / 6) * 4 + indices[i];
 
     position = uPositions[vertexIndex].xyz;
 

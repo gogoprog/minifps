@@ -21,10 +21,10 @@ abstract Rectangle(Array<Float>) from Array<Float> to Array<Float> {
     inline function set_height(value) return this[3] = value;
 
     public var bottom(get, never):Float;
-    inline function get_bottom() return y;
+    inline function get_bottom() return y + height;
 
     public var top(get, never):Float;
-    inline function get_top() return y + height;
+    inline function get_top() return y;
 
     public var left(get, never):Float;
     inline function get_left() return x;
