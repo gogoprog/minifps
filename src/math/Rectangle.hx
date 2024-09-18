@@ -1,7 +1,7 @@
 package math;
 
 abstract Rectangle(Array<Float>) from Array<Float> to Array<Float> {
-    public function new(x=0.0, y=0.0, w=0.0, h=0.0) {
+    public function new(x, y, w, h) {
         this = [x, y, w, h];
     }
     public var x(get, set):Float;
