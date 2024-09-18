@@ -1,7 +1,7 @@
 package math;
 
 abstract Vector2(Array<Float>) from Array<Float> to Array<Float> {
-    public function new(x=0.0, y=0.0) {
+    public function new(x, y) {
         this = [x, y];
     }
     public var x(get, set):Float;

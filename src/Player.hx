@@ -10,7 +10,7 @@ var cameraPitch = 0.0;
 var keys:Dynamic = {};
 var mouseMove = [0, 0];
 var mouseDown = false;
-var playerPosition = [0.0, 0, 0];
+var playerPosition:math.Vector3 = [0, 0, 0];
 var playerVelocity = [0.0, 0.0, 0.0];
 var playerAcceleration = [0.0, 0.0, 0.0];
 var gravity = -15;
@@ -30,7 +30,7 @@ class Player {
         return false;
     }
 
-    static public function init() {
+    inline static public function init() {
         Shim.canvas.onmousemove = function(e) {
             mouseMove[0] += e.movementX;
             mouseMove[1] += e.movementY;
@@ -51,7 +51,7 @@ class Player {
         };
     }
 
-    static public function update(deltaTime:Float) {
+    inline static public function update(deltaTime:Float) {
         var moveSpeed = 0.8;
         var mouseSensitivity = 0.002;
         cameraYaw -= mouseMove[0] * mouseSensitivity;
@@ -147,5 +147,4 @@ class Player {
         Renderer.setCamera([playerPosition[0], playerPosition[1] + 0.2, playerPosition[2]], cameraYaw, cameraPitch);
         mouseMove[0] = mouseMove[1] = 0;
     }
-
 }

@@ -27,7 +27,7 @@ abstract DataBuffer(js.lib.Float32Array) from js.lib.Float32Array to js.lib.Floa
 
 var globalYaw = 0.0;
 var globalPitch = 0.0;
-var cameraPosition = [0.0, 1, 5];
+var cameraPosition:math.Vector3 = [0, 1, 5];
 var cameraYaw = 0.0;
 var cameraPitch = 0.0;
 var program:js.html.webgl.Program;
@@ -91,7 +91,7 @@ class Renderer {
         Shim.g.dr(Shim.g.TRIANGLES, 0, count);
     }
 
-    static public function init() {
+    inline static public function init() {
         Shim.canvas.width = 512;
         Shim.canvas.height = 512;
         js.Syntax.code(" for(i in g=c.getContext(`webgl2`)) { g[i[0]+i[6]]=g[i]; } ");
@@ -158,15 +158,13 @@ class Renderer {
         Shim.g.uniform2f(resolutionUniformLocation, Shim.canvas.width, Shim.canvas.height);
     }
 
-    static public function setCamera(position, yaw, pitch) {
-        cameraPosition[0] = position[0];
-        cameraPosition[1] = position[1];
-        cameraPosition[2] = position[2];
+    inline static public function setCamera(position:math.Vector3, yaw, pitch) {
+        cameraPosition.copyFrom(position);
         cameraYaw = yaw;
         cameraPitch = pitch;
     }
 
-    static public function preRender() {
+    inline static public function preRender() {
         Shim.g.clearColor(0.87, 0.97, 0.80, 1.0);
         Shim.g.clear(Shim.g.COLOR_BUFFER_BIT | Shim.g.DEPTH_BUFFER_BIT);
         // Shim.g.uniform1f(timeUniformLocation, t);
@@ -175,7 +173,7 @@ class Renderer {
         Shim.g.uniform1f(cameraPitchUniformLocation, cameraPitch);
     }
 
-    static public function drawMap() {
+    inline static public function drawMap() {
         Shim.g.uniform1i(useCameraUniformLocation, 0);
         Shim.g.uniform1f(scaleUniformLocation, 1000.0);
         // draw(36);
