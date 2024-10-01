@@ -2,7 +2,7 @@ package math;
 
 abstract Vector3(Array<Float>) from Array<Float> to Array<Float> {
     public function new(x, y, z) {
-        this = [x, y];
+        this = [x, y, z];
     }
     public var x(get, set):Float;
     inline function get_x() return this[0];

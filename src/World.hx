@@ -3,7 +3,6 @@ package;
 // var data = Macros.getFileContent("data/Castle_Tower.obj");
 var mapGen:map.Generator = new map.Generator();
 var map:map.Map;
-
 var triangles = new Array<math.Triangle>();
 
 class World {
@@ -41,7 +40,7 @@ class World {
             buffer.setTexCoord(i+1, 1 * w.getLength(), 0);
             buffer.setTexCoord(i+2, 1 * w.getLength(), 1);
             buffer.setTexCoord(i+3, 0, 1);
-            i+=4;
+            i += 4;
         }
 
         return buffer;
@@ -49,5 +48,18 @@ class World {
 
     inline static public function getVertexCount() {
         return 6 + map.walls.length * 6;
+    }
+
+    inline static public function collides(p:math.Vector3) {
+        var result = false;
+
+        for(tri in triangles) {
+            if(tri.distanceToPoint(p) < 32) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
     }
 }

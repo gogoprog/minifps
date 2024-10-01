@@ -127,9 +127,6 @@ class Renderer {
     }
 
     inline static public function drawMap() {
-        Shim.g.uniform1i(useCameraUniformLocation, 0);
-        Shim.g.uniform1f(scaleUniformLocation, 1000.0);
-        // draw(36);
         Shim.g.uniform1f(globalYawUniformLocation, globalYaw);
         Shim.g.uniform1f(globalPitchUniformLocation, globalPitch);
         Shim.g.uniform1i(useCameraUniformLocation, 1);

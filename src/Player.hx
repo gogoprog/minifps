@@ -27,7 +27,7 @@ class Player {
     static inline function checkCollision(x:Float, y:Float, z:Float):Bool {
         if(y < 1) { return true; }
 
-        return false;
+        return World.collides(new math.Vector3(x, y, z));
     }
 
     inline static public function init() {
