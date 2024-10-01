@@ -4,10 +4,15 @@ precision highp float;
 out vec2 vCoords;
 out vec3 vNormal;
 
+struct Vertex
+{
+    vec4 position;
+    vec4 normal;
+    vec4 texCoords;
+};
+
 layout(std140) uniform Data {
-    vec4 uPositions[1024];
-    vec4 uNormals[1024];
-    vec4 uTexCoords[1024];
+    Vertex vertices[1024];
 };
 
 uniform vec2 uResolution;
@@ -72,13 +77,13 @@ void main() {
 
     int vertexIndex = int(gl_VertexID / 6) * 4 + indices[i];
 
-    position = uPositions[vertexIndex].xyz;
+    position = vertices[vertexIndex].position.xyz;
 
     position *= uScale;
 
-    normal = uNormals[vertexIndex].xyz;
+    normal = vertices[vertexIndex].normal.xyz;
 
-    vCoords = uTexCoords[vertexIndex].xy;
+    vCoords = vertices[vertexIndex].texCoords.xy;
 
     float cosYaw = cos(uGlobalYaw);
     float sinYaw = sin(uGlobalYaw);

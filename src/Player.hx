@@ -25,7 +25,7 @@ class Player {
         return keys[untyped str];
     }
     static inline function checkCollision(x:Float, y:Float, z:Float):Bool {
-        if(y < 1) { return true; }
+        if(y < 0) { return true; }
 
         return World.collides(new math.Vector3(x, y, z));
     }
@@ -144,7 +144,7 @@ class Player {
             playerPosition[2] += pushDirection * 0.01;
         }
 
-        Renderer.setCamera([playerPosition[0], playerPosition[1] + 0.2, playerPosition[2]], cameraYaw, cameraPitch);
+        Renderer.setCamera([playerPosition[0], playerPosition[1] + 0.4, playerPosition[2]], cameraYaw, cameraPitch);
         mouseMove[0] = mouseMove[1] = 0;
     }
 }
