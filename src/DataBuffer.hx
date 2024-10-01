@@ -2,6 +2,7 @@ package;
 
 abstract DataBuffer(js.lib.Float32Array) from js.lib.Float32Array to js.lib.Float32Array {
     static inline var count = 1024;
+
     public function new() {
         this = new js.lib.Float32Array(count * 4 * 3);
     }
@@ -10,6 +11,12 @@ abstract DataBuffer(js.lib.Float32Array) from js.lib.Float32Array to js.lib.Floa
         this[i * 4 + 0] = x;
         this[i * 4 + 1] = y;
         this[i * 4 + 2] = z;
+    }
+
+    public function setPosition2(i, v:math.Vector3) {
+        this[i * 4 + 0] = v.x;
+        this[i * 4 + 1] = v.y;
+        this[i * 4 + 2] = v.z;
     }
 
     public function setTexCoord(i, u, v) {

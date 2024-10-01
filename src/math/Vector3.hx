@@ -113,4 +113,17 @@ abstract Vector3(Array<Float>) from Array<Float> to Array<Float> {
         this[1] *= value;
         this[2] *= value;
     }
+
+    public function cross(v:Vector3):Vector3 {
+        return new Vector3(
+            this[1] * v.z - this[2] * v.y,
+            this[2] * v.x - this[0] * v.z,
+            this[0] * v.y - this[1] * v.x
+        );
+    }
+
+    public function getNormalized():Vector3 {
+        var len = getLength();
+        return new Vector3(x / len, y / len, z / len);
+    }
 }

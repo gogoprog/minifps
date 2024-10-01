@@ -12,7 +12,6 @@ var cameraPosition:math.Vector3 = [0, 1, 5];
 var cameraYaw = 0.0;
 var cameraPitch = 0.0;
 var program:js.html.webgl.Program;
-var mapGen:map.Generator = new map.Generator();
 var timeUniformLocation:js.html.webgl.UniformLocation;
 var cameraPositionUniformLocation:js.html.webgl.UniformLocation;
 var cameraYawUniformLocation:js.html.webgl.UniformLocation;
@@ -22,7 +21,6 @@ var globalPitchUniformLocation:js.html.webgl.UniformLocation;
 var useCameraUniformLocation:js.html.webgl.UniformLocation;
 var scaleUniformLocation:js.html.webgl.UniformLocation;
 var resolutionUniformLocation:js.html.webgl.UniformLocation;
-var map:map.Map;
 
 class Renderer {
     inline static function createProgram() {
@@ -91,35 +89,8 @@ class Renderer {
         useProgram(program);
         Shim.g.enable(Shim.g.DEPTH_TEST);
         Shim.g.disable(Shim.g.CULL_FACE);
-        map = mapGen.generate();
-        var size = 10;
         {
-            var buffer = new DataBuffer();
-            buffer.setPosition(0, -size, 0, -size);
-            buffer.setPosition(1, size, 0, -size);
-            buffer.setPosition(2, size, 0, size);
-            buffer.setPosition(3, -size, 0, size);
-            buffer.setTexCoord(0, 0, 0);
-            buffer.setTexCoord(1, 1, 0);
-            buffer.setTexCoord(2, 1, 1);
-            buffer.setTexCoord(3, 0, 1);
-            trace(map.walls.length);
-            var i = 4;
-
-            for(w in map.walls) {
-                buffer.setPosition(i+0, w.x1, 0, w.y1);
-                buffer.setPosition(i+1, w.x2, 0, w.y2);
-                buffer.setPosition(i+2, w.x2, 2, w.y2);
-                buffer.setPosition(i+3, w.x1, 2, w.y1);
-                buffer.setTexCoord(i+0, 0, 0);
-                buffer.setTexCoord(i+1, 1 * w.getLength(), 0);
-                buffer.setTexCoord(i+2, 1 * w.getLength(), 1);
-                buffer.setTexCoord(i+3, 0, 1);
-                i+=4;
-            }
-
             var buffer = World.load();
-
             var ubo = Shim.g.createBuffer();
             Shim.g.bindBuffer(Shim.g.UNIFORM_BUFFER, ubo);
             Shim.g.bufferData(Shim.g.UNIFORM_BUFFER, buffer, Shim.g.STATIC_DRAW);
@@ -163,7 +134,7 @@ class Renderer {
         Shim.g.uniform1f(globalPitchUniformLocation, globalPitch);
         Shim.g.uniform1i(useCameraUniformLocation, 1);
         Shim.g.uniform1f(scaleUniformLocation, 1.0);
-        draw(6 + map.walls.length * 6);
+        draw(World.getVertexCount());
     }
 
 }
