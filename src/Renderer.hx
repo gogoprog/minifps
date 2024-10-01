@@ -134,4 +134,10 @@ class Renderer {
         draw(World.getVertexCount());
     }
 
+    inline static public function createVertexBuffer(data:DataBuffer) {
+        // gl.bindBuffer(gl.ARRAY_BUFFER, buffer_object_id);
+        // gl.vertexAttribPointer(vertex_location,  3, gl.FLOAT, false, bytes_per_float*8, 0);
+        // gl.vertexAttribPointer(color_location,   3, gl.FLOAT, false, bytes_per_float*8, bytes_per_float*3);
+        // gl.vertexAttribPointer(texture_location, 2, gl.FLOAT, false, bytes_per_float*8, bytes_per_float*6);
+    }
 }
