@@ -11,19 +11,15 @@ class World {
         // var data = Macros.getFileContent("data/Pistol_02.obj");
         // return ObjLoader.load(data);
 
-        var buffer = new DataBuffer();
+        var buffer = new DataBuffer(1024);
         var size = 10;
 
-        buffer.setPosition(0, new math.Vector3(-size, 0, -size));
-        buffer.setPosition(1, new math.Vector3(size, 0, -size));
-        buffer.setPosition(2, new math.Vector3(size, 0, size));
-        buffer.setPosition(3, new math.Vector3(-size, 0, size));
-        buffer.setTexCoord(0, 0, 0);
-        buffer.setTexCoord(1, 1, 0);
-        buffer.setTexCoord(2, 1, 1);
-        buffer.setTexCoord(3, 0, 1);
+        var n = new math.Vector3(0, 1, 0);
 
-        var i = 4;
+        buffer.add(new math.Vector3(-size, 0, -size), n, new math.Vector2(0, 0));
+        buffer.add(new math.Vector3(size, 0, -size), n, new math.Vector2(1, 0));
+        buffer.add(new math.Vector3(size, 0, size), n, new math.Vector2(1, 1));
+        buffer.add(new math.Vector3(-size, 0, size), n, new math.Vector2(0, 1));
 
         map = mapGen.generate();
 
@@ -33,17 +29,13 @@ class World {
             var v2 = new math.Vector3(w.x2, 0, w.y2);
             var v3 = new math.Vector3(w.x2, h, w.y2);
             var v4 = new math.Vector3(w.x1, h, w.y1);
+            var n = new math.Vector3(0, 1, 0);
+            buffer.add(v1, n, new math.Vector2(0, 0));
+            buffer.add(v2, n, new math.Vector2(1 * w.getLength(), 0));
+            buffer.add(v3, n, new math.Vector2(1 * w.getLength(), h));
+            buffer.add(v4, n, new math.Vector2(0, h));
             var tri1 = new math.Triangle(v1, v2, v3);
             var tri2 = new math.Triangle(v3, v4, v1);
-            buffer.setPosition(i+0, v1);
-            buffer.setPosition(i+1, v2);
-            buffer.setPosition(i+2, v3);
-            buffer.setPosition(i+3, v4);
-            buffer.setTexCoord(i+0, 0, 0);
-            buffer.setTexCoord(i+1, 1 * w.getLength(), 0);
-            buffer.setTexCoord(i+2, 1 * w.getLength(), h);
-            buffer.setTexCoord(i+3, 0, h);
-            i += 4;
             triangles.push(tri1);
             triangles.push(tri2);
         }
