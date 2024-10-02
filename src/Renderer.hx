@@ -124,6 +124,8 @@ class Renderer {
         Shim.g.uniform3f(cameraPositionUniformLocation, cameraPosition[0], cameraPosition[1], cameraPosition[2]);
         Shim.g.uniform1f(cameraYawUniformLocation, cameraYaw);
         Shim.g.uniform1f(cameraPitchUniformLocation, cameraPitch);
+        Shim.g.uniform1i(useCameraUniformLocation, 1);
+        Shim.g.uniform1f(scaleUniformLocation, 1.0);
     }
 
     inline static public function drawMap() {
@@ -134,23 +136,28 @@ class Renderer {
         draw(World.getVertexCount());
     }
 
+    inline static public function drawModel(model:Model) {
+        Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, model.vertexBuffer);
+        draw(model.vertexCount);
+    }
+
     inline static public function createVertexBuffer(data:DataBuffer) {
         var vertexBuffer = Shim.g.createBuffer();
         Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, vertexBuffer);
         Shim.g.bufferData(Shim.g.ARRAY_BUFFER, data, Shim.g.STATIC_DRAW);
-        var stride = 10 * 4;
+        var stride = 12 * 4;
         {
-            var location = Shim.g.getAttribLocation(program, 'a_position');
+            var location = Shim.g.getAttribLocation(program, 'aPosition');
             Shim.g.enableVertexAttribArray(location);
             Shim.g.vertexAttribPointer(location, 3, Shim.g.FLOAT, false, stride, 0);
         }
         {
-            var location = Shim.g.getAttribLocation(program, 'a_normal');
+            var location = Shim.g.getAttribLocation(program, 'aNormal');
             Shim.g.enableVertexAttribArray(location);
             Shim.g.vertexAttribPointer(location, 3, Shim.g.FLOAT, false, stride, 4 * 4);
         }
         {
-            var location = Shim.g.getAttribLocation(program, 'a_texcoord');
+            var location = Shim.g.getAttribLocation(program, 'aTexCoord');
             Shim.g.enableVertexAttribArray(location);
             Shim.g.vertexAttribPointer(location, 2, Shim.g.FLOAT, false, stride, 8 * 4);
         }

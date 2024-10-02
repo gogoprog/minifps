@@ -11,11 +11,12 @@ var windowIsVisible = true;
 function main() {
     Renderer.init();
     Player.init();
-
-    var data = Macros.getFileContent("data/Pistol_02.obj");
-    var buffer = ObjLoader.load(data);
-    var vbuffer = Renderer.createVertexBuffer(buffer);
-
+    // var model = new Model(Macros.getFileContent("data/Pistol_02.obj"));
+    // var data = Macros.getFileContent("data/Pistol_02.obj");
+    // var buffer = ObjLoader.load(data);
+    // var vbuffer = Renderer.createVertexBuffer(buffer);
+    var buffer = World.load();
+    var worldModel = new Model(buffer);
     function loop(t:Float) {
         if(!windowIsVisible) {
             js.Browser.window.setTimeout(function() {loop(t+1);}, 1000);
@@ -27,7 +28,8 @@ function main() {
         lastTime = t;
         Player.update(deltaTime);
         Renderer.preRender();
-        Renderer.drawMap();
+        // Renderer.drawMap();
+        Renderer.drawModel(worldModel);
         js.Browser.window.requestAnimationFrame(loop);
     }
     js.Browser.window.requestAnimationFrame(loop);

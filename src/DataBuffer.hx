@@ -15,6 +15,10 @@ abstract DataBuffer(js.lib.Float32Array) from js.lib.Float32Array to js.lib.Floa
         untyped this.count++;
     }
 
+    public function getCount():Int {
+        return untyped this.count;
+    }
+
     inline private function setPosition(i, v:math.Vector3) {
         this[i * stride + 0] = v.x;
         this[i * stride + 1] = v.y;

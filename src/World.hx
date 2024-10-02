@@ -15,7 +15,9 @@ class World {
         buffer.add(new math.Vector3(-size, 0, -size), n, new math.Vector2(0, 0));
         buffer.add(new math.Vector3(size, 0, -size), n, new math.Vector2(1, 0));
         buffer.add(new math.Vector3(size, 0, size), n, new math.Vector2(1, 1));
+        buffer.add(new math.Vector3(size, 0, size), n, new math.Vector2(1, 1));
         buffer.add(new math.Vector3(-size, 0, size), n, new math.Vector2(0, 1));
+        buffer.add(new math.Vector3(-size, 0, -size), n, new math.Vector2(0, 0));
 
         map = mapGen.generate();
 
@@ -29,7 +31,9 @@ class World {
             buffer.add(v1, n, new math.Vector2(0, 0));
             buffer.add(v2, n, new math.Vector2(1 * w.getLength(), 0));
             buffer.add(v3, n, new math.Vector2(1 * w.getLength(), h));
+            buffer.add(v3, n, new math.Vector2(1 * w.getLength(), h));
             buffer.add(v4, n, new math.Vector2(0, h));
+            buffer.add(v1, n, new math.Vector2(0, 0));
             var tri1 = new math.Triangle(v1, v2, v3);
             var tri2 = new math.Triangle(v3, v4, v1);
             triangles.push(tri1);
