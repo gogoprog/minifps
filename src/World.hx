@@ -7,10 +7,6 @@ var triangles = new Array<math.Triangle>();
 
 class World {
     inline static public function load():DataBuffer {
-
-        // var data = Macros.getFileContent("data/Pistol_02.obj");
-        // return ObjLoader.load(data);
-
         var buffer = new DataBuffer(1024);
         var size = 10;
 

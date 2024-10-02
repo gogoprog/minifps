@@ -11,6 +11,11 @@ var windowIsVisible = true;
 function main() {
     Renderer.init();
     Player.init();
+
+    var data = Macros.getFileContent("data/Pistol_02.obj");
+    var buffer = ObjLoader.load(data);
+    var vbuffer = Renderer.createVertexBuffer(buffer);
+
     function loop(t:Float) {
         if(!windowIsVisible) {
             js.Browser.window.setTimeout(function() {loop(t+1);}, 1000);

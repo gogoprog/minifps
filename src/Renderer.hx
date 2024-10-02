@@ -135,9 +135,25 @@ class Renderer {
     }
 
     inline static public function createVertexBuffer(data:DataBuffer) {
-        // gl.bindBuffer(gl.ARRAY_BUFFER, buffer_object_id);
-        // gl.vertexAttribPointer(vertex_location,  3, gl.FLOAT, false, bytes_per_float*8, 0);
-        // gl.vertexAttribPointer(color_location,   3, gl.FLOAT, false, bytes_per_float*8, bytes_per_float*3);
-        // gl.vertexAttribPointer(texture_location, 2, gl.FLOAT, false, bytes_per_float*8, bytes_per_float*6);
+        var vertexBuffer = Shim.g.createBuffer();
+        Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, vertexBuffer);
+        Shim.g.bufferData(Shim.g.ARRAY_BUFFER, data, Shim.g.STATIC_DRAW);
+        var stride = 10 * 4;
+        {
+            var location = Shim.g.getAttribLocation(program, 'a_position');
+            Shim.g.enableVertexAttribArray(location);
+            Shim.g.vertexAttribPointer(location, 3, Shim.g.FLOAT, false, stride, 0);
+        }
+        {
+            var location = Shim.g.getAttribLocation(program, 'a_normal');
+            Shim.g.enableVertexAttribArray(location);
+            Shim.g.vertexAttribPointer(location, 3, Shim.g.FLOAT, false, stride, 4 * 4);
+        }
+        {
+            var location = Shim.g.getAttribLocation(program, 'a_texcoord');
+            Shim.g.enableVertexAttribArray(location);
+            Shim.g.vertexAttribPointer(location, 2, Shim.g.FLOAT, false, stride, 8 * 4);
+        }
+        return vertexBuffer;
     }
 }

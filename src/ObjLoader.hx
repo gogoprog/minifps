@@ -2,7 +2,7 @@ package;
 
 class ObjLoader {
     inline static public function load(data:String):DataBuffer {
-        var buffer = new DataBuffer();
+        var buffer = new DataBuffer(1024);
 
         var lines = data.split('\n');
 
