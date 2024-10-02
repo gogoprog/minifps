@@ -7,6 +7,7 @@ class Model {
     public function new(buffer:DataBuffer) {
         vertexBuffer = Renderer.createVertexBuffer(buffer);
         vertexCount = buffer.getCount();
+        trace(vertexBuffer);
     }
 
 }

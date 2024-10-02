@@ -89,16 +89,6 @@ class Renderer {
         useProgram(program);
         Shim.g.enable(Shim.g.DEPTH_TEST);
         Shim.g.disable(Shim.g.CULL_FACE);
-        {
-            var buffer = World.load();
-            var ubo = Shim.g.createBuffer();
-            Shim.g.bindBuffer(Shim.g.UNIFORM_BUFFER, ubo);
-            Shim.g.bufferData(Shim.g.UNIFORM_BUFFER, buffer, Shim.g.STATIC_DRAW);
-            Shim.g.bindBuffer(Shim.g.UNIFORM_BUFFER, null);
-            var uboIndex = Shim.g.getUniformBlockIndex(program, "Data");
-            Shim.g.uniformBlockBinding(program, uboIndex, 0);
-            Shim.g.bindBufferBase(Shim.g.UNIFORM_BUFFER, 0, ubo);
-        }
         timeUniformLocation = Shim.g.getUniformLocation(program, "uTime");
         cameraPositionUniformLocation = Shim.g.getUniformLocation(program, "uCameraPosition");
         cameraYawUniformLocation = Shim.g.getUniformLocation(program, "uCameraYaw");
@@ -128,15 +118,12 @@ class Renderer {
         Shim.g.uniform1f(scaleUniformLocation, 1.0);
     }
 
-    inline static public function drawMap() {
-        Shim.g.uniform1f(globalYawUniformLocation, globalYaw);
-        Shim.g.uniform1f(globalPitchUniformLocation, globalPitch);
-        Shim.g.uniform1i(useCameraUniformLocation, 1);
-        Shim.g.uniform1f(scaleUniformLocation, 1.0);
-        draw(World.getVertexCount());
-    }
-
     inline static public function drawModel(model:Model) {
+        Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, model.vertexBuffer);
+        draw(model.vertexCount);
+    }
+    inline static public function drawModel2(model:Model) {
+        Shim.g.uniform1f(scaleUniformLocation, 1.0);
         Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, model.vertexBuffer);
         draw(model.vertexCount);
     }
