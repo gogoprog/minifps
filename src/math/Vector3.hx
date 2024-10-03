@@ -1,6 +1,7 @@
 package math;
 
 abstract Vector3(Array<Float>) from Array<Float> to Array<Float> {
+    public static var zero:Vector3 = new Vector3(0, 0, 0);
     public function new(x, y, z) {
         this = [x, y, z];
     }

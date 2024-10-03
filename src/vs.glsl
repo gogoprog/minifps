@@ -21,9 +21,9 @@ layout(std140) uniform Data {
 };
 */
 
-
 uniform vec2 uResolution;
 uniform vec3 uCameraPosition;
+uniform vec3 uPosition;
 uniform float uCameraYaw;
 uniform float uCameraPitch;
 uniform float uGlobalYaw;
@@ -32,7 +32,7 @@ uniform bool uUseCamera;
 uniform float uScale;
 
 const float fov = radians(60.0);
-const float near = 0.1;
+const float near = 0.01;
 const float far = 1000.0;
 const vec3 cameraUp = vec3(0.0, 1.0, 0.0);
 
@@ -79,20 +79,9 @@ void main() {
     vec3 position;
     vec3 normal;
 
-    int indices[6] = int[6](0, 1, 2, 2, 3, 0);
-    int i = gl_VertexID % 6;
+    position = uPosition + uScale * aPosition;
 
-    int vertexIndex = int(gl_VertexID / 6) * 4 + indices[i];
-
-    //position = vertices[vertexIndex].position.xyz;
-    position = aPosition;
-
-    position *= uScale;
-
-    //normal = vertices[vertexIndex].normal.xyz;
     normal = aNormal;
-
-    //vCoords = vertices[vertexIndex].texCoords.xy;
     vCoords = aTexCoord;
 
     float cosYaw = cos(uGlobalYaw);

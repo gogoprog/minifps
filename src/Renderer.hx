@@ -14,6 +14,7 @@ var cameraPitch = 0.0;
 var program:js.html.webgl.Program;
 var timeUniformLocation:js.html.webgl.UniformLocation;
 var cameraPositionUniformLocation:js.html.webgl.UniformLocation;
+var positionUniformLocation:js.html.webgl.UniformLocation;
 var cameraYawUniformLocation:js.html.webgl.UniformLocation;
 var cameraPitchUniformLocation:js.html.webgl.UniformLocation;
 var globalYawUniformLocation:js.html.webgl.UniformLocation;
@@ -21,6 +22,9 @@ var globalPitchUniformLocation:js.html.webgl.UniformLocation;
 var useCameraUniformLocation:js.html.webgl.UniformLocation;
 var scaleUniformLocation:js.html.webgl.UniformLocation;
 var resolutionUniformLocation:js.html.webgl.UniformLocation;
+var positionLocation:Int;
+var normalLocation:Int;
+var texCoordLocation:Int;
 
 class Renderer {
     inline static function createProgram() {
@@ -91,6 +95,7 @@ class Renderer {
         Shim.g.disable(Shim.g.CULL_FACE);
         timeUniformLocation = Shim.g.getUniformLocation(program, "uTime");
         cameraPositionUniformLocation = Shim.g.getUniformLocation(program, "uCameraPosition");
+        positionUniformLocation = Shim.g.getUniformLocation(program, "uPosition");
         cameraYawUniformLocation = Shim.g.getUniformLocation(program, "uCameraYaw");
         cameraPitchUniformLocation = Shim.g.getUniformLocation(program, "uCameraPitch");
         globalYawUniformLocation = Shim.g.getUniformLocation(program, "uGlobalYaw");
@@ -99,6 +104,9 @@ class Renderer {
         scaleUniformLocation = Shim.g.getUniformLocation(program, "uScale");
         resolutionUniformLocation = Shim.g.getUniformLocation(program, "uResolution");
         Shim.g.uniform2f(resolutionUniformLocation, Shim.canvas.width, Shim.canvas.height);
+        positionLocation = Shim.g.getAttribLocation(program, 'aPosition');
+        normalLocation = Shim.g.getAttribLocation(program, 'aNormal');
+        texCoordLocation = Shim.g.getAttribLocation(program, 'aTexCoord');
     }
 
     inline static public function setCamera(position:math.Vector3, yaw, pitch) {
@@ -118,45 +126,21 @@ class Renderer {
         Shim.g.uniform1f(scaleUniformLocation, 1.0);
     }
 
-    inline static public function drawModel(model:Model) {
-        Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, model.vertexBuffer);
-        var stride = 12 * 4;
-        {
-            var location = Shim.g.getAttribLocation(program, 'aPosition');
-            Shim.g.enableVertexAttribArray(location);
-            Shim.g.vertexAttribPointer(location, 3, Shim.g.FLOAT, false, stride, 0);
-        }
-        {
-            var location = Shim.g.getAttribLocation(program, 'aNormal');
-            Shim.g.enableVertexAttribArray(location);
-            Shim.g.vertexAttribPointer(location, 3, Shim.g.FLOAT, false, stride, 4 * 4);
-        }
-        {
-            var location = Shim.g.getAttribLocation(program, 'aTexCoord');
-            Shim.g.enableVertexAttribArray(location);
-            Shim.g.vertexAttribPointer(location, 2, Shim.g.FLOAT, false, stride, 8 * 4);
-        }
-        draw(model.vertexCount);
+    inline static public function setModelPosition(pos:math.Vector3) {
+        Shim.g.uniform3f(positionUniformLocation, pos.x, pos.y, pos.z);
     }
-    inline static public function drawModel2(model:Model) {
-        Shim.g.uniform1f(scaleUniformLocation, 1.0);
-        Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, model.vertexBuffer);
+
+    inline static public function drawModel(model:Model, useCam:Bool=true, scale:Float=1.0) {
+        Shim.g.uniform1i(useCameraUniformLocation, useCam ? 1 : 0);
+        Shim.g.uniform1f(scaleUniformLocation, scale);
         var stride = 12 * 4;
-        {
-            var location = Shim.g.getAttribLocation(program, 'aPosition');
-            Shim.g.enableVertexAttribArray(location);
-            Shim.g.vertexAttribPointer(location, 3, Shim.g.FLOAT, false, stride, 0);
-        }
-        {
-            var location = Shim.g.getAttribLocation(program, 'aNormal');
-            Shim.g.enableVertexAttribArray(location);
-            Shim.g.vertexAttribPointer(location, 3, Shim.g.FLOAT, false, stride, 4 * 4);
-        }
-        {
-            var location = Shim.g.getAttribLocation(program, 'aTexCoord');
-            Shim.g.enableVertexAttribArray(location);
-            Shim.g.vertexAttribPointer(location, 2, Shim.g.FLOAT, false, stride, 8 * 4);
-        }
+        Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, model.vertexBuffer);
+        Shim.g.enableVertexAttribArray(positionLocation);
+        Shim.g.vertexAttribPointer(positionLocation, 3, Shim.g.FLOAT, false, stride, 0);
+        Shim.g.enableVertexAttribArray(normalLocation);
+        Shim.g.vertexAttribPointer(normalLocation, 3, Shim.g.FLOAT, false, stride, 4 * 4);
+        Shim.g.enableVertexAttribArray(texCoordLocation);
+        Shim.g.vertexAttribPointer(texCoordLocation, 2, Shim.g.FLOAT, false, stride, 8 * 4);
         draw(model.vertexCount);
     }
 
