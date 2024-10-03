@@ -120,18 +120,6 @@ class Renderer {
 
     inline static public function drawModel(model:Model) {
         Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, model.vertexBuffer);
-        draw(model.vertexCount);
-    }
-    inline static public function drawModel2(model:Model) {
-        Shim.g.uniform1f(scaleUniformLocation, 1.0);
-        Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, model.vertexBuffer);
-        draw(model.vertexCount);
-    }
-
-    inline static public function createVertexBuffer(data:DataBuffer) {
-        var vertexBuffer = Shim.g.createBuffer();
-        Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, vertexBuffer);
-        Shim.g.bufferData(Shim.g.ARRAY_BUFFER, data, Shim.g.STATIC_DRAW);
         var stride = 12 * 4;
         {
             var location = Shim.g.getAttribLocation(program, 'aPosition');
@@ -148,6 +136,34 @@ class Renderer {
             Shim.g.enableVertexAttribArray(location);
             Shim.g.vertexAttribPointer(location, 2, Shim.g.FLOAT, false, stride, 8 * 4);
         }
+        draw(model.vertexCount);
+    }
+    inline static public function drawModel2(model:Model) {
+        Shim.g.uniform1f(scaleUniformLocation, 1.0);
+        Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, model.vertexBuffer);
+        var stride = 12 * 4;
+        {
+            var location = Shim.g.getAttribLocation(program, 'aPosition');
+            Shim.g.enableVertexAttribArray(location);
+            Shim.g.vertexAttribPointer(location, 3, Shim.g.FLOAT, false, stride, 0);
+        }
+        {
+            var location = Shim.g.getAttribLocation(program, 'aNormal');
+            Shim.g.enableVertexAttribArray(location);
+            Shim.g.vertexAttribPointer(location, 3, Shim.g.FLOAT, false, stride, 4 * 4);
+        }
+        {
+            var location = Shim.g.getAttribLocation(program, 'aTexCoord');
+            Shim.g.enableVertexAttribArray(location);
+            Shim.g.vertexAttribPointer(location, 2, Shim.g.FLOAT, false, stride, 8 * 4);
+        }
+        draw(model.vertexCount);
+    }
+
+    inline static public function createVertexBuffer(data:DataBuffer) {
+        var vertexBuffer = Shim.g.createBuffer();
+        Shim.g.bindBuffer(Shim.g.ARRAY_BUFFER, vertexBuffer);
+        Shim.g.bufferData(Shim.g.ARRAY_BUFFER, data, Shim.g.STATIC_DRAW);
         return vertexBuffer;
     }
 }

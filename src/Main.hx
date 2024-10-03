@@ -31,7 +31,7 @@ function main() {
         lastTime = t;
         Player.update(deltaTime);
         Renderer.preRender();
-        // Renderer.drawModel(worldModel);
+        Renderer.drawModel(worldModel);
         Renderer.drawModel2(gunModel);
         js.Browser.window.requestAnimationFrame(loop);
     }
