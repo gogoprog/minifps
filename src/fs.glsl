@@ -35,6 +35,9 @@ float fbm(vec2 st) {
     return value;
 }
 
+const mat4 bayerMatrix4x4 =
+    mat4x4(0.0, 8.0, 2.0, 10.0, 12.0, 4.0, 14.0, 6.0, 3.0, 11.0, 1.0, 9.0, 15.0, 7.0, 13.0, 5.0) / 16.0;
+
 void main() {
     vec3 lightDir = normalize(vec3(1.0, 2.0, 1.0));
     vec3 ambient = vec3(0.3, 0.3, 0.3);
@@ -53,14 +56,14 @@ void main() {
 
     float val = 0.299 * litColor.r + 0.587 * litColor.g + 0.114 * litColor.b;
 
-    if (val > 0.9) {
-        val = 1.0;
-    } else if (val < 0.1) {
+    int x = int(gl_FragCoord.x) % 4;
+    int y = int(gl_FragCoord.y) % 4;
+    float threshold = bayerMatrix4x4[y][x];
+
+    if (val < threshold) {
         val = 0.0;
     } else {
-        val = float(int(gl_FragCoord.x + gl_FragCoord.y) % int(10.0 * val));
-
-        val = val > 0.5 ? 1.0 : 0.0;
+        val = 1.0;
     }
 
     if (uUseCamera) {
