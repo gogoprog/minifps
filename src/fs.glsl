@@ -5,6 +5,7 @@ uniform vec2 uResolution;
 uniform float uScale;
 uniform float uCameraYaw;
 uniform float uCameraPitch;
+uniform bool uUseCamera;
 
 in vec2 vCoords;
 in vec3 vNormal;
@@ -44,7 +45,7 @@ void main() {
     float squareSize = 0.1;
     vec2 squarePos = floor(vCoords.xy / squareSize);
     float random = fract(sin(dot(squarePos, vec2(12.9898, 78.233))) * 43758.5453);
-    vec3 light = vec3(0.2, 0.2, 0.0);
+    vec3 light = vec3(0.3, 0.2, 0.0);
     vec3 dark = vec3(0.8, 0.3, 0.0);
     baseColor = mix(light, dark, step(0.5, random));
 
@@ -52,14 +53,20 @@ void main() {
 
     float val = 0.299 * litColor.r + 0.587 * litColor.g + 0.114 * litColor.b;
 
-    if (val > 0.6) {
+    if (val > 0.9) {
         val = 1.0;
-    } else if (val < 0.4) {
+    } else if (val < 0.1) {
         val = 0.0;
     } else {
         val = float(int(gl_FragCoord.x + gl_FragCoord.y) % int(10.0 * val));
 
         val = val > 0.5 ? 1.0 : 0.0;
+    }
+
+    if (uUseCamera) {
+        if (vCoords.y < 0.01 || vCoords.y > 0.99) {
+            val = 0.0;
+        }
     }
 
     if (val == 1.0f) {
