@@ -2,7 +2,7 @@ package;
 
 class ObjLoader {
     inline static public function load(data:String):DataBuffer {
-        var buffer = new DataBuffer(600);
+        var buffer = new DataBuffer(2048);
 
         var lines = data.split('\n');
 
@@ -24,6 +24,11 @@ class ObjLoader {
                     normals.push(v);
                 }
 
+                case 'vt': {
+                    var v = new math.Vector2(Std.parseFloat(p[1]), Std.parseFloat(p[2]));
+                    texcoords.push(v);
+                }
+
                 case 'f': {
                     var v1 = parseIntArray(p[1].split('/'));
                     var v2 = parseIntArray(p[2].split('/'));
@@ -31,17 +36,11 @@ class ObjLoader {
                     var vs = [v1, v2, v3];
 
                     for(v in vs) {
-                        buffer.add(vertices[v[0] - 1], normals[v[1] - 1], new math.Vector2(Math.random(), Math.random()));
+                        buffer.add(vertices[v[0] - 1], normals[v[1] - 1], texcoords[v[1] - 1]);
                     }
-
-                    if(buffer.getCount() == 600) { break; }
                 }
             }
         }
-
-        trace(vertices.length);
-        trace(normals.length);
-        trace(buffer.getCount());
 
         return buffer;
     }
