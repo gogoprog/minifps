@@ -11,6 +11,7 @@ abstract DataBuffer(js.lib.Float32Array) from js.lib.Float32Array to js.lib.Floa
     public function add(p:math.Vector3, n:math.Vector3, t:math.Vector2) {
         var c = untyped this.count;
         setPosition(c, p);
+        setNormal(c, n);
         setTexCoord(c, t);
         untyped this.count++;
     }
@@ -23,6 +24,12 @@ abstract DataBuffer(js.lib.Float32Array) from js.lib.Float32Array to js.lib.Floa
         this[i * stride + 0] = v.x;
         this[i * stride + 1] = v.y;
         this[i * stride + 2] = v.z;
+    }
+
+    inline private function setNormal(i, v:math.Vector3) {
+        this[i * stride + 4] = v.x;
+        this[i * stride + 5] = v.y;
+        this[i * stride + 6] = v.z;
     }
 
     inline private function setTexCoord(i, t:math.Vector2) {

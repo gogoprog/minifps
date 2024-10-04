@@ -75,13 +75,25 @@ mat4 computeViewMatrix() {
                 -dot(xaxis, cameraPosition), -dot(yaxis, cameraPosition), -dot(zaxis, cameraPosition), 1.0);
 }
 
+mat3 computeNormalMatrix(mat4 mvMatrix) {
+    mat3 normalMatrix = mat3(mvMatrix);
+    normalMatrix = inverse(normalMatrix);
+    normalMatrix = transpose(normalMatrix);
+    return normalMatrix;
+}
+
+mat4 mat3ToMat4(mat3 rotationMatrix) {
+    mat4 result = mat4(1.0);
+    result[0].xyz = rotationMatrix[0];
+    result[1].xyz = rotationMatrix[1];
+    result[2].xyz = rotationMatrix[2];
+    return result;
+}
+
 void main() {
     vec3 position;
     vec3 normal;
 
-    position = uPosition + uScale * aPosition;
-
-    normal = aNormal;
     vCoords = aTexCoord;
 
     float cosYaw = cos(uGlobalYaw);
@@ -91,15 +103,23 @@ void main() {
     mat3 rotationMatrix = mat3(cosYaw, 0.0, -sinYaw, sinYaw * sinPitch, cosPitch, cosYaw * sinPitch, sinYaw * cosPitch,
                                -sinPitch, cosYaw * cosPitch);
 
-    position = rotationMatrix * position;
+    position = uPosition + uScale * rotationMatrix * aPosition;
+    normal = rotationMatrix * aNormal;
 
     mat4 projection = computeProjectionMatrix();
     mat4 view = computeViewMatrix();
 
     gl_Position = projection * view * vec4(position, 1.0);
-    vNormal = rotationMatrix * normal;
+
+    mat3 normalMatrix = computeNormalMatrix(mat3ToMat4(rotationMatrix) * view);
+
+    // vNormal = normalize(normalMatrix * normal);
+    vNormal = normal;
 
     if (!uUseCamera) {
         gl_Position = projection * vec4(position, 1.0);
+
+        mat3 normalMatrix = computeNormalMatrix(view);
+        vNormal = normalize(normalMatrix * normal);
     }
 }

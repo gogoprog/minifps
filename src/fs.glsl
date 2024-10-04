@@ -42,17 +42,21 @@ void main() {
     vec3 lightDir = normalize(vec3(1.0, 2.0, 1.0));
     vec3 ambient = vec3(0.3, 0.3, 0.3);
     float diff = max(dot(normalize(vNormal), lightDir), 0.0);
-    vec3 litColor;
 
-    vec3 baseColor;
     float squareSize = 0.1;
     vec2 squarePos = floor(vCoords.xy / squareSize);
     float random = fract(sin(dot(squarePos, vec2(12.9898, 78.233))) * 43758.5453);
     vec3 light = vec3(0.3, 0.2, 0.0);
     vec3 dark = vec3(0.8, 0.3, 0.0);
-    baseColor = mix(light, dark, step(0.5, random));
+    vec3 baseColor = mix(light, dark, step(0.5, random));
 
-    litColor = ambient + baseColor * (diff * 0.6 + 0.4);
+    if (!uUseCamera) {
+        baseColor = vec3(0.5, 0.5, 0.5);
+    }
+
+    vec3 litColor = ambient + baseColor * (diff * 0.6 + 0.1);
+
+    // fragColor = vec4(litColor, 1.0);
 
     float val = 0.299 * litColor.r + 0.587 * litColor.g + 0.114 * litColor.b;
 

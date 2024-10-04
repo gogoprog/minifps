@@ -36,7 +36,7 @@ class ObjLoader {
                     var vs = [v1, v2, v3];
 
                     for(v in vs) {
-                        buffer.add(vertices[v[0] - 1], normals[v[1] - 1], texcoords[v[1] - 1]);
+                        buffer.add(vertices[v[0] - 1], normals[v[2] - 1], texcoords[v[1] - 1]);
                     }
                 }
             }
