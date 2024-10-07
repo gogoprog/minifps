@@ -52,6 +52,7 @@ function main() {
         Renderer.setModelPosition(new math.Vector3(0.01, -0.015, -0.04));
         Renderer.drawModel(gunModel, false, 0.005);
         Renderer.drawModel(gunModel, true, 1.0, t, 0);
+        Renderer.postRender();
         js.Browser.window.requestAnimationFrame(loop);
     }
 

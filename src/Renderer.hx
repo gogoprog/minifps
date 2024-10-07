@@ -12,6 +12,8 @@ var cameraPosition:math.Vector3 = [0, 1, 5];
 var cameraYaw = 0.0;
 var cameraPitch = 0.0;
 var program:js.html.webgl.Program;
+var mainTexture:js.html.webgl.Texture;
+var outlineProgram:js.html.webgl.Program;
 var timeUniformLocation:js.html.webgl.UniformLocation;
 var cameraPositionUniformLocation:js.html.webgl.UniformLocation;
 var positionUniformLocation:js.html.webgl.UniformLocation;
@@ -22,6 +24,7 @@ var globalPitchUniformLocation:js.html.webgl.UniformLocation;
 var useCameraUniformLocation:js.html.webgl.UniformLocation;
 var scaleUniformLocation:js.html.webgl.UniformLocation;
 var resolutionUniformLocation:js.html.webgl.UniformLocation;
+var mainSamplerUniformLocation:js.html.webgl.UniformLocation;
 var positionLocation:Int;
 var normalLocation:Int;
 var texCoordLocation:Int;
@@ -85,49 +88,59 @@ class Renderer {
         gl.dr(gl.TRIANGLES, 0, count);
     }
 
+    inline static function createProgram2(vs_src, fs_src) {
+        var vs = createShader(vertexShader());
+        shaderSource(vs, vs_src);
+        compileShader(vs);
+        var fs = createShader(fragmentShader());
+        shaderSource(fs, fs_src);
+        compileShader(fs);
+        var program = createProgram();
+        attachShader(program, vs);
+        attachShader(program, fs);
+        linkProgram(program);
+        return program;
+    }
+
     inline static public function init() {
         Shim.canvas.width = 800;
         Shim.canvas.height = 600;
         js.Syntax.code(" for(i in g=c.getContext(`webgl2`)) { g[i[0]+i[6]]=g[i]; } ");
         gl = Shim.g;
-        var src = Macros.getFileContent("src/vs.glsl");
-        var vs = createShader(vertexShader());
-        shaderSource(vs, src);
-        compileShader(vs);
-        var src = Macros.getFileContent("src/fs.glsl");
-        var fs = createShader(fragmentShader());
-        shaderSource(fs, src);
-        compileShader(fs);
-        program = createProgram();
-        attachShader(program, vs);
-        attachShader(program, fs);
-        linkProgram(program);
-        useProgram(program);
         gl.enable(gl.DEPTH_TEST);
         gl.disable(gl.CULL_FACE);
-        timeUniformLocation = gl.getUniformLocation(program, "uTime");
-        cameraPositionUniformLocation = gl.getUniformLocation(program, "uCameraPosition");
-        positionUniformLocation = gl.getUniformLocation(program, "uPosition");
-        cameraYawUniformLocation = gl.getUniformLocation(program, "uCameraYaw");
-        cameraPitchUniformLocation = gl.getUniformLocation(program, "uCameraPitch");
-        globalYawUniformLocation = gl.getUniformLocation(program, "uGlobalYaw");
-        globalPitchUniformLocation = gl.getUniformLocation(program, "uGlobalPitch");
-        useCameraUniformLocation = gl.getUniformLocation(program, "uUseCamera");
-        scaleUniformLocation = gl.getUniformLocation(program, "uScale");
-        resolutionUniformLocation = gl.getUniformLocation(program, "uResolution");
-        gl.uniform2f(resolutionUniformLocation, Shim.canvas.width, Shim.canvas.height);
-        positionLocation = gl.getAttribLocation(program, 'aPosition');
-        normalLocation = gl.getAttribLocation(program, 'aNormal');
-        texCoordLocation = gl.getAttribLocation(program, 'aTexCoord');
-        var gl = gl;
+        {
+            outlineProgram = createProgram2(Macros.getFileContent("src/outline_vs.glsl"), Macros.getFileContent("src/outline_fs.glsl"));
+            mainSamplerUniformLocation = gl.getUniformLocation(outlineProgram, "mainSampler");
+        }
+        {
+            var vs_src = Macros.getFileContent("src/vs.glsl");
+            var fs_src = Macros.getFileContent("src/fs.glsl");
+            program = createProgram2(vs_src, fs_src);
+            useProgram(program);
+            timeUniformLocation = gl.getUniformLocation(program, "uTime");
+            cameraPositionUniformLocation = gl.getUniformLocation(program, "uCameraPosition");
+            positionUniformLocation = gl.getUniformLocation(program, "uPosition");
+            cameraYawUniformLocation = gl.getUniformLocation(program, "uCameraYaw");
+            cameraPitchUniformLocation = gl.getUniformLocation(program, "uCameraPitch");
+            globalYawUniformLocation = gl.getUniformLocation(program, "uGlobalYaw");
+            globalPitchUniformLocation = gl.getUniformLocation(program, "uGlobalPitch");
+            useCameraUniformLocation = gl.getUniformLocation(program, "uUseCamera");
+            scaleUniformLocation = gl.getUniformLocation(program, "uScale");
+            resolutionUniformLocation = gl.getUniformLocation(program, "uResolution");
+            gl.uniform2f(resolutionUniformLocation, Shim.canvas.width, Shim.canvas.height);
+            positionLocation = gl.getAttribLocation(program, 'aPosition');
+            normalLocation = gl.getAttribLocation(program, 'aNormal');
+            texCoordLocation = gl.getAttribLocation(program, 'aTexCoord');
+        }
         mainFramebuffer = gl.createFramebuffer();
         gl.bindFramebuffer(gl.FRAMEBUFFER, mainFramebuffer);
-        var texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+        mainTexture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, mainTexture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, Shim.canvas.width, Shim.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, mainTexture, 0);
         var depthBuffer = gl.createRenderbuffer();
         gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
         gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, Shim.canvas.width, Shim.canvas.height);
@@ -141,17 +154,26 @@ class Renderer {
     }
 
     inline static public function preRender() {
-        gl.clearColor(0.87, 0.97, 0.80, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        useProgram(program);
         // gl.uniform1f(timeUniformLocation, t);
         gl.uniform3f(cameraPositionUniformLocation, cameraPosition[0], cameraPosition[1], cameraPosition[2]);
         gl.uniform1f(cameraYawUniformLocation, cameraYaw);
         gl.uniform1f(cameraPitchUniformLocation, cameraPitch);
         gl.uniform1i(useCameraUniformLocation, 1);
         gl.uniform1f(scaleUniformLocation, 1.0);
-
         gl.bindFramebuffer(gl.FRAMEBUFFER, mainFramebuffer);
+        gl.clearColor(0.87, 0.97, 0.80, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    }
+
+    inline static public function postRender() {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, mainTexture);
+        useProgram(outlineProgram);
+        gl.uniform1i(mainSamplerUniformLocation, 0);
+        draw(6);
     }
 
     inline static public function setModelPosition(pos:math.Vector3) {
