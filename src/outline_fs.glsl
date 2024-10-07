@@ -7,10 +7,10 @@ uniform sampler2D depthSampler;
 out vec4 fragColor;
 
 void main() {
-
     vec2 coord = gl_FragCoord.xy;
-    vec2 size = vec2(textureSize(mainSampler, 0));
-    vec4 color = texture(mainSampler, coord / size);
+    ivec2 icoord = ivec2(int(coord.x), int(coord.y));
+    vec4 color = texelFetch(mainSampler, icoord, 0);
+    //vec4 color = texelFetch(depthSampler, icoord, 0);
 
     fragColor = vec4(color.rgb, 1.0);
 }

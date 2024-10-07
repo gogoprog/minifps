@@ -76,4 +76,15 @@ void main() {
         fragColor = vec4(0.04, 0.1, 0.1, 1.0);
     }
     // fragColor = vec4(litColor, 1.0);
+    //
+    // higher priority: outline
+    /*
+    if (dot(viewDirection, normalDirection) 
+       < mix(_UnlitOutlineThickness, _LitOutlineThickness, 
+       max(0.0, dot(normalDirection, lightDirection))))
+    {
+       fragmentColor = 
+          vec3(_LightColor0) * vec3(_OutlineColor); 
+    }
+    */
 }

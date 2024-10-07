@@ -13,6 +13,7 @@ var cameraYaw = 0.0;
 var cameraPitch = 0.0;
 var program:js.html.webgl.Program;
 var mainTexture:js.html.webgl.Texture;
+var depthTexture:js.html.webgl.Texture;
 var outlineProgram:js.html.webgl.Program;
 var timeUniformLocation:js.html.webgl.UniformLocation;
 var cameraPositionUniformLocation:js.html.webgl.UniformLocation;
@@ -25,6 +26,7 @@ var useCameraUniformLocation:js.html.webgl.UniformLocation;
 var scaleUniformLocation:js.html.webgl.UniformLocation;
 var resolutionUniformLocation:js.html.webgl.UniformLocation;
 var mainSamplerUniformLocation:js.html.webgl.UniformLocation;
+var depthSamplerUniformLocation:js.html.webgl.UniformLocation;
 var positionLocation:Int;
 var normalLocation:Int;
 var texCoordLocation:Int;
@@ -112,6 +114,7 @@ class Renderer {
         {
             outlineProgram = createProgram2(Macros.getFileContent("src/outline_vs.glsl"), Macros.getFileContent("src/outline_fs.glsl"));
             mainSamplerUniformLocation = gl.getUniformLocation(outlineProgram, "mainSampler");
+            depthSamplerUniformLocation = gl.getUniformLocation(outlineProgram, "depthSampler");
         }
         {
             var vs_src = Macros.getFileContent("src/vs.glsl");
@@ -141,10 +144,10 @@ class Renderer {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, mainTexture, 0);
-        var depthBuffer = gl.createRenderbuffer();
-        gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
-        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, Shim.canvas.width, Shim.canvas.height);
-        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+        depthTexture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, depthTexture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT32F, Shim.canvas.width, Shim.canvas.height, 0, gl.DEPTH_COMPONENT, gl.FLOAT, null);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTexture, 0);
     }
 
     inline static public function setCamera(position:math.Vector3, yaw, pitch) {
@@ -171,8 +174,11 @@ class Renderer {
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, mainTexture);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, depthTexture);
         useProgram(outlineProgram);
         gl.uniform1i(mainSamplerUniformLocation, 0);
+        gl.uniform1i(depthSamplerUniformLocation, 1);
         draw(6);
     }
 
