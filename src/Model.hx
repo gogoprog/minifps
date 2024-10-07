@@ -9,7 +9,6 @@ class Model {
         this.buffer = buffer;
         vertexBuffer = Renderer.createVertexBuffer(buffer);
         vertexCount = buffer.getCount();
-        trace(vertexBuffer);
     }
 
 }

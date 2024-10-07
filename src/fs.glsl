@@ -39,7 +39,7 @@ const mat4 bayerMatrix4x4 =
     mat4x4(0.0, 8.0, 2.0, 10.0, 12.0, 4.0, 14.0, 6.0, 3.0, 11.0, 1.0, 9.0, 15.0, 7.0, 13.0, 5.0) / 16.0;
 
 void main() {
-    vec3 lightDir = normalize(vec3(1.0, 2.0, 1.0));
+    vec3 lightDir = normalize(vec3(1.0, 2.0, -1.0));
     vec3 ambient = vec3(0.3, 0.3, 0.3);
     float diff = max(dot(normalize(vNormal), lightDir), 0.0);
 
@@ -70,17 +70,10 @@ void main() {
         val = 1.0;
     }
 
-    if (uUseCamera) {
-        if (vCoords.y < 0.01 || vCoords.y > 0.99) {
-            val = 0.0;
-        }
-    }
-
     if (val == 1.0f) {
         fragColor = vec4(0.87, 0.97, 0.80, 1.0);
     } else {
         fragColor = vec4(0.04, 0.1, 0.1, 1.0);
     }
-
     // fragColor = vec4(litColor, 1.0);
 }
