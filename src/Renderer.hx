@@ -189,7 +189,7 @@ class Renderer {
         gl.uniform3f(positionUniformLocation, pos.x, pos.y, pos.z);
     }
 
-    inline static public function drawModel(model:Model, useCam:Bool=true, scale:Float=1.0, yaw=0.0, pitch=0.0) {
+    inline static public function drawModel(model:ModelData, useCam:Bool=true, scale:Float=1.0, yaw=0.0, pitch=0.0) {
         gl.uniform1i(useCameraUniformLocation, useCam ? 1 : 0);
         gl.uniform1f(scaleUniformLocation, scale);
         gl.uniform1f(globalYawUniformLocation, yaw);

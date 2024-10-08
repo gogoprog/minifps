@@ -1,6 +1,6 @@
 package;
 
-class Model {
+class ModelData {
     public var buffer:DataBuffer;
     public var vertexBuffer:js.html.webgl.Buffer;
     public var vertexCount:Int;
