@@ -146,8 +146,11 @@ class Renderer {
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, mainTexture, 0);
         depthTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, depthTexture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT32F, Shim.canvas.width, Shim.canvas.height, 0, gl.DEPTH_COMPONENT, gl.FLOAT, null);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT24, Shim.canvas.width, Shim.canvas.height, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTexture, 0);
+        gl.checkFramebufferStatus(gl.FRAMEBUFFER);
     }
 
     inline static public function setCamera(position:math.Vector3, yaw, pitch) {
@@ -172,11 +175,11 @@ class Renderer {
     inline static public function postRender() {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        useProgram(outlineProgram);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, mainTexture);
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, depthTexture);
-        useProgram(outlineProgram);
         gl.uniform1i(mainSamplerUniformLocation, 0);
         gl.uniform1i(depthSamplerUniformLocation, 1);
         draw(6);
