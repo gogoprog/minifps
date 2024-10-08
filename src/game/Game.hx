@@ -17,6 +17,7 @@ class Game {
                 e.position = new math.Vector3(Std.random(10) * 10, 0, Std.random(10) * 10);
                 e.scale = 0.1;
                 e.pitch = -Math.PI/2;
+                engine.add(e);
             }
         }
     }

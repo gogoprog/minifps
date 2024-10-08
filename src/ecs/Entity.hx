@@ -20,4 +20,11 @@ class Entity {
         components.remove(Type.getClassName(componentClass));
     }
 
+    public function has<T>(componentClass:Class<T>):Bool {
+        return components.exists(Type.getClassName(componentClass));
+    }
+
+    public function get<T>(componentClass:Class<T>):T {
+        return components.get(Type.getClassName(componentClass));
+    }
 }
