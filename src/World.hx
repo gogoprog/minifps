@@ -8,15 +8,16 @@ var triangles = new Array<math.Triangle>();
 class World {
     inline static public function load():DataBuffer {
         var buffer = new DataBuffer(1024);
-        var size = 10;
+        var size = 100;
+        var tsize = 100;
 
         var n = new math.Vector3(0, 1, 0);
 
         buffer.add(new math.Vector3(-size, 0, -size), n, new math.Vector2(0, 0));
-        buffer.add(new math.Vector3(size, 0, -size), n, new math.Vector2(1, 0));
-        buffer.add(new math.Vector3(size, 0, size), n, new math.Vector2(1, 1));
-        buffer.add(new math.Vector3(size, 0, size), n, new math.Vector2(1, 1));
-        buffer.add(new math.Vector3(-size, 0, size), n, new math.Vector2(0, 1));
+        buffer.add(new math.Vector3(size, 0, -size), n, new math.Vector2(tsize, 0));
+        buffer.add(new math.Vector3(size, 0, size), n, new math.Vector2(tsize, tsize));
+        buffer.add(new math.Vector3(size, 0, size), n, new math.Vector2(tsize, tsize));
+        buffer.add(new math.Vector3(-size, 0, size), n, new math.Vector2(0, tsize));
         buffer.add(new math.Vector3(-size, 0, -size), n, new math.Vector2(0, 0));
 
         map = mapGen.generate();

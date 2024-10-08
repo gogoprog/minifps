@@ -38,8 +38,6 @@ class Player {
         untyped onkeydown = onkeyup = function(e) {
             keys[e.key] = e.type[3] == 'd';
         }
-        untyped window.onfocus = (e) -> { windowIsVisible = true; };
-        untyped window.onblur = (e) -> { windowIsVisible = false; };
         var size = 10;
         playerPosition = [size/2, 10.0, size/2];
         Shim.canvas.onmousedown = function(e) {

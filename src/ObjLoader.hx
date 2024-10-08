@@ -57,7 +57,8 @@ class ObjLoader {
                         }
 
                         if(texcoord == null) {
-                            texcoord = new math.Vector2(Math.random(), Math.random());
+                            // texcoord = new math.Vector2(Math.random(), Math.random());
+                            texcoord = new math.Vector2(0, 0);
                         }
 
                         buffer.add(vertices[v[0] - 1], normal, texcoord);

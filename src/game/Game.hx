@@ -20,6 +20,25 @@ class Game {
                 engine.add(e);
             }
         }
+        {
+            var data = Macros.getFileContent("data/Pistol_02.obj");
+            var buffer = ObjLoader.load(data);
+            var gunModel = new ModelData(buffer);
+            var e = new ecs.Entity();
+            e.add(Model).modelData = gunModel;
+            e.get(Model).worldSpace = false;
+            e.position = new math.Vector3(0.015, -0.016, -0.04);
+            e.scale = 0.005;
+            e.add(PlayerGun);
+            engine.add(e);
+            var e = new ecs.Entity();
+            e.add(Model).modelData = gunModel;
+            e.get(Model).worldSpace = false;
+            e.position = new math.Vector3(-0.015, -0.016, -0.04);
+            e.scale = 0.005;
+            e.add(PlayerGun);
+            engine.add(e);
+        }
     }
     static public function update(dt:Float) {
         engine.update(dt);

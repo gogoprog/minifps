@@ -13,5 +13,4 @@ class ModelSystem extends ecs.System {
         Renderer.setModelPosition(e.position);
         Renderer.drawModel(model.modelData, model.worldSpace, e.scale, e.yaw, e.pitch);
     }
-
 }
