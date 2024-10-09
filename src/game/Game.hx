@@ -5,6 +5,7 @@ var engine:ecs.Engine;
 class Game {
     static public function init() {
         engine = new ecs.Engine();
+        engine.enable(PlayerSystem);
         engine.enable(ModelSystem);
         {
             var data = Macros.getFileContent("data/Castle_Tower.obj");
@@ -37,6 +38,12 @@ class Game {
             e.position = new math.Vector3(-0.015, -0.016, -0.04);
             e.scale = 0.005;
             e.add(PlayerGun);
+            engine.add(e);
+        }
+        {
+            var e = new ecs.Entity();
+            e.add(Player);
+            e.position = new math.Vector3(0.0, 0.0, 0.0);
             engine.add(e);
         }
     }
