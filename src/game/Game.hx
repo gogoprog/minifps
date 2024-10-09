@@ -60,6 +60,20 @@ class Game {
                 engine.add(e);
             }
         }
+        {
+            var data = Macros.getFileContent("data/ball.obj");
+            var buffer = ObjLoader.load(data);
+            var model = new ModelData(buffer);
+
+            for(i in 0...100) {
+                var e = new ecs.Entity();
+                e.add(Model).modelData = model;
+                e.position = new math.Vector3(Std.random(10) * 10, 2, Std.random(10) * 10);
+                e.scale = 0.1;
+                e.pitch = 0;
+                engine.add(e);
+            }
+        }
     }
     static public function update(dt:Float) {
         engine.update(dt);

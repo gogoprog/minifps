@@ -214,4 +214,23 @@ class Renderer {
         gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, stride, 8 * 4);
         return vao;
     }
+
+    inline static public function createText(text, width, height) {
+        var textCtx = cast(js.Browser.document.createElement("canvas"), js.html.CanvasElement).getContext("2d");
+        textCtx.canvas.width  = width;
+        textCtx.canvas.height = height;
+        textCtx.font = "20px monospace";
+        textCtx.textAlign = "center";
+        textCtx.textBaseline = "middle";
+        textCtx.fillStyle = "black";
+        textCtx.clearRect(0, 0, textCtx.canvas.width, textCtx.canvas.height);
+        textCtx.fillText(text, width / 2, height / 2);
+        var result = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, result);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCtx.canvas);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        return result;
+    }
 }
