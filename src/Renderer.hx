@@ -175,6 +175,7 @@ class Renderer {
     inline static public function postRender() {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        gl.bindVertexArray(null);
         useProgram(outlineProgram);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, mainTexture);
@@ -194,23 +195,23 @@ class Renderer {
         gl.uniform1f(scaleUniformLocation, scale);
         gl.uniform1f(globalYawUniformLocation, yaw);
         gl.uniform1f(globalPitchUniformLocation, pitch);
+        gl.bindVertexArray(model.vertexArrayObject);
+        draw(model.vertexCount);
+    }
+
+    inline static public function createVertexArrayObject(data:DataBuffer) {
+        var vao = gl.createVertexArray();
+        gl.bindVertexArray(vao);
+        var vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
         var stride = 12 * 4;
-        gl.bindBuffer(gl.ARRAY_BUFFER, model.vertexBuffer);
         gl.enableVertexAttribArray(positionLocation);
         gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, stride, 0);
         gl.enableVertexAttribArray(normalLocation);
         gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, stride, 4 * 4);
         gl.enableVertexAttribArray(texCoordLocation);
         gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, stride, 8 * 4);
-        draw(model.vertexCount);
+        return vao;
     }
-
-    inline static public function createVertexBuffer(data:DataBuffer) {
-        var vertexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-        return vertexBuffer;
-    }
-
-    // inline static public function
 }
