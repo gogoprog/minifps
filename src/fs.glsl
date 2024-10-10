@@ -6,6 +6,8 @@ uniform float uScale;
 uniform float uCameraYaw;
 uniform float uCameraPitch;
 uniform bool uUseCamera;
+uniform bool uUseTexture;
+uniform sampler2D mainSampler;
 
 in vec2 vCoords;
 in vec3 vNormal;
@@ -54,6 +56,10 @@ void main() {
         baseColor = vec3(0.5, 0.5, 0.5);
     }
 
+    if (uUseTexture) {
+        baseColor = texture(mainSampler, vCoords).rgb;
+    }
+
     vec3 litColor = ambient + baseColor * (diff * 0.6 + 0.1);
 
     // fragColor = vec4(litColor, 1.0);
@@ -79,12 +85,12 @@ void main() {
     //
     // higher priority: outline
     /*
-    if (dot(viewDirection, normalDirection) 
-       < mix(_UnlitOutlineThickness, _LitOutlineThickness, 
+    if (dot(viewDirection, normalDirection)
+       < mix(_UnlitOutlineThickness, _LitOutlineThickness,
        max(0.0, dot(normalDirection, lightDirection))))
     {
-       fragmentColor = 
-          vec3(_LightColor0) * vec3(_OutlineColor); 
+       fragmentColor =
+          vec3(_LightColor0) * vec3(_OutlineColor);
     }
     */
 }

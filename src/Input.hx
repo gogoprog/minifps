@@ -8,6 +8,7 @@ extern private class Shim {
 var keys:Dynamic = {};
 var mouseMove:math.Vector2 = [0, 0];
 var mouseDown = false;
+var previousMouseDown = false;
 
 class Input {
     inline static public function init() {
@@ -29,6 +30,7 @@ class Input {
 
     inline static public function update() {
         mouseMove[0] = mouseMove[1] = 0;
+        previousMouseDown = mouseDown;
     }
 
     inline static public function getKey(str:String) {
@@ -41,5 +43,9 @@ class Input {
 
     inline static public function isMouseDown() {
         return mouseDown;
+    }
+
+    inline static public function isMouseJustDown() {
+        return mouseDown && !previousMouseDown;
     }
 }

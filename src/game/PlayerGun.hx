@@ -1,6 +1,7 @@
 package game;
 
-class PlayerGun
-{
+class PlayerGun {
+    public var firing = false;
+    public var time = 0.0;
+    public var cooldown = 0.5;
 }
-

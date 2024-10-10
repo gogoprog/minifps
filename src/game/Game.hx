@@ -6,6 +6,7 @@ class Game {
     static public function init() {
         engine = new ecs.Engine();
         engine.enable(PlayerSystem);
+        engine.enable(PlayerGunSystem);
         engine.enable(ModelSystem);
         {
             var data = Macros.getFileContent("data/Castle_Tower.obj");

@@ -7,7 +7,7 @@ var triangles = new Array<math.Triangle>();
 
 class World {
     inline static public function load():DataBuffer {
-        var buffer = new DataBuffer(1024);
+        var buffer = new DataBuffer(2048);
         var size = 100;
         var tsize = 100;
 
@@ -52,7 +52,7 @@ class World {
         var result = false;
 
         for(tri in triangles) {
-            if(tri.distanceToPoint(p) < 0.5) {
+            if(tri.distanceToPoint(p) < 0.2) {
                 result = true;
                 break;
             }

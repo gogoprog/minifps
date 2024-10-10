@@ -2,3 +2,5 @@ retail
 build
 temp
 *.zip
+/tags
+

@@ -25,7 +25,9 @@ var globalPitchUniformLocation:js.html.webgl.UniformLocation;
 var useCameraUniformLocation:js.html.webgl.UniformLocation;
 var scaleUniformLocation:js.html.webgl.UniformLocation;
 var resolutionUniformLocation:js.html.webgl.UniformLocation;
+var useTextureUniformLocation:js.html.webgl.UniformLocation;
 var mainSamplerUniformLocation:js.html.webgl.UniformLocation;
+var screenSamplerUniformLocation:js.html.webgl.UniformLocation;
 var depthSamplerUniformLocation:js.html.webgl.UniformLocation;
 var positionLocation:Int;
 var normalLocation:Int;
@@ -113,7 +115,7 @@ class Renderer {
         gl.disable(gl.CULL_FACE);
         {
             outlineProgram = createProgram2(Macros.getFileContent("src/outline_vs.glsl"), Macros.getFileContent("src/outline_fs.glsl"));
-            mainSamplerUniformLocation = gl.getUniformLocation(outlineProgram, "mainSampler");
+            screenSamplerUniformLocation = gl.getUniformLocation(outlineProgram, "screenSampler");
             depthSamplerUniformLocation = gl.getUniformLocation(outlineProgram, "depthSampler");
         }
         {
@@ -131,6 +133,8 @@ class Renderer {
             useCameraUniformLocation = gl.getUniformLocation(program, "uUseCamera");
             scaleUniformLocation = gl.getUniformLocation(program, "uScale");
             resolutionUniformLocation = gl.getUniformLocation(program, "uResolution");
+            useTextureUniformLocation = gl.getUniformLocation(program, "uUseTexture");
+            mainSamplerUniformLocation = gl.getUniformLocation(program, "mainSampler");
             gl.uniform2f(resolutionUniformLocation, Shim.canvas.width, Shim.canvas.height);
             positionLocation = gl.getAttribLocation(program, 'aPosition');
             normalLocation = gl.getAttribLocation(program, 'aNormal');
@@ -166,10 +170,13 @@ class Renderer {
         gl.uniform1f(cameraYawUniformLocation, cameraYaw);
         gl.uniform1f(cameraPitchUniformLocation, cameraPitch);
         gl.uniform1i(useCameraUniformLocation, 1);
+        gl.uniform1i(useTextureUniformLocation, 0);
         gl.uniform1f(scaleUniformLocation, 1.0);
         gl.bindFramebuffer(gl.FRAMEBUFFER, mainFramebuffer);
         gl.clearColor(0.87, 0.97, 0.80, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, null);
     }
 
     inline static public function postRender() {
@@ -181,7 +188,7 @@ class Renderer {
         gl.bindTexture(gl.TEXTURE_2D, mainTexture);
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, depthTexture);
-        gl.uniform1i(mainSamplerUniformLocation, 0);
+        gl.uniform1i(screenSamplerUniformLocation, 0);
         gl.uniform1i(depthSamplerUniformLocation, 1);
         draw(6);
     }
