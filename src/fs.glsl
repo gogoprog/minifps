@@ -52,17 +52,22 @@ void main() {
     vec3 dark = vec3(0.8, 0.3, 0.0);
     vec3 baseColor = mix(light, dark, step(0.5, random));
 
+    float alpha = 1.0;
+
     if (!uUseCamera) {
         baseColor = vec3(0.5, 0.5, 0.5);
     }
 
     if (uUseTexture) {
-        baseColor = texture(mainSampler, vCoords).rgb;
+        vec4 color = texture(mainSampler, vCoords).rgba;
+        baseColor = color.rgb;
+        alpha = color.a;
     }
 
     vec3 litColor = ambient + baseColor * (diff * 0.6 + 0.1);
 
-    // fragColor = vec4(litColor, 1.0);
+    // fragColor = vec4(litColor, alpha);
+    // return;
 
     float val = 0.299 * litColor.r + 0.587 * litColor.g + 0.114 * litColor.b;
 
@@ -77,9 +82,9 @@ void main() {
     }
 
     if (val == 1.0f) {
-        fragColor = vec4(0.87, 0.97, 0.80, 1.0);
+        fragColor = vec4(0.87, 0.97, 0.80, alpha);
     } else {
-        fragColor = vec4(0.04, 0.1, 0.1, 1.0);
+        fragColor = vec4(0.04, 0.1, 0.1, alpha);
     }
     // fragColor = vec4(litColor, 1.0);
     //

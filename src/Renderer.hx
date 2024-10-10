@@ -112,6 +112,9 @@ class Renderer {
         js.Syntax.code(" for(i in g=c.getContext(`webgl2`)) { g[i[0]+i[6]]=g[i]; } ");
         gl = Shim.g;
         gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.BLEND);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         gl.disable(gl.CULL_FACE);
         {
             outlineProgram = createProgram2(Macros.getFileContent("src/outline_vs.glsl"), Macros.getFileContent("src/outline_fs.glsl"));
@@ -176,7 +179,6 @@ class Renderer {
         gl.clearColor(0.87, 0.97, 0.80, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, null);
     }
 
     inline static public function postRender() {
@@ -198,7 +200,9 @@ class Renderer {
     }
 
     inline static public function drawModel(model:ModelData, useCam:Bool=true, scale:Float=1.0, yaw=0.0, pitch=0.0) {
+        gl.bindTexture(gl.TEXTURE_2D, model.texture);
         gl.uniform1i(useCameraUniformLocation, useCam ? 1 : 0);
+        gl.uniform1i(useTextureUniformLocation, (model.texture != null) ? 1 : 0);
         gl.uniform1f(scaleUniformLocation, scale);
         gl.uniform1f(globalYawUniformLocation, yaw);
         gl.uniform1f(globalPitchUniformLocation, pitch);
@@ -222,22 +226,29 @@ class Renderer {
         return vao;
     }
 
-    inline static public function createText(text, width, height) {
+    inline static public function createText(text, width, height, ?bgcolor) {
         var textCtx = cast(js.Browser.document.createElement("canvas"), js.html.CanvasElement).getContext("2d");
         textCtx.canvas.width  = width;
         textCtx.canvas.height = height;
         textCtx.font = "20px monospace";
         textCtx.textAlign = "center";
         textCtx.textBaseline = "middle";
-        textCtx.fillStyle = "black";
         textCtx.clearRect(0, 0, textCtx.canvas.width, textCtx.canvas.height);
+
+        if(bgcolor != null) {
+            textCtx.fillStyle = bgcolor;
+            textCtx.fillRect(0, 0, textCtx.canvas.width, textCtx.canvas.height);
+        }
+
+        textCtx.fillStyle = "black";
         textCtx.fillText(text, width / 2, height / 2);
         var result = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, result);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCtx.canvas);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+        js.Browser.document.body.appendChild(cast textCtx.canvas);
         return result;
     }
 }
