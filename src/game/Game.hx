@@ -63,7 +63,8 @@ class Game {
                 var e = new ecs.Entity();
                 e.add(Ball);
                 e.add(Model).modelData = model;
-                e.position = new math.Vector3(Std.random(10) * 10, 2, Std.random(10) * 10);
+                e.get(Model).offset.y = -0.2;
+                e.position = new math.Vector3(Std.random(10) * 10, 0.3, Std.random(10) * 10);
                 e.scale = 0.1;
                 e.pitch = 0;
                 engine.add(e);

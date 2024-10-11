@@ -18,6 +18,12 @@ class MoveSystem extends ecs.System {
             e.remove(Move);
         }
 
-        e.position += move.velocity * dt;
+        var next_position = e.position + move.velocity * dt;
+
+        if(!World.collides(next_position)) {
+            e.position = next_position;
+        } else {
+            e.remove(Move);
+        }
     }
 }

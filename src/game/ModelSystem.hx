@@ -8,9 +8,9 @@ class ModelSystem extends ecs.System {
         requires(Model);
     }
 
-    override public function updateEntity(e, dt) {
+    override public function updateEntity(e:ecs.Entity, dt:Float) {
         var model = e.get(Model);
-        Renderer.setModelPosition(e.position);
+        Renderer.setModelPosition(e.position + model.offset);
         Renderer.drawModel(model.modelData, model.worldSpace, e.scale, e.yaw, e.pitch);
     }
 }

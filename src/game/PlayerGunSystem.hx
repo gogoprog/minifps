@@ -56,7 +56,7 @@ class PlayerGunSystem extends ecs.System {
         var targ = origin + direction * 10;
 
         for(b in engine.getSystem(BallSystem).entities) {
-            if(raySphereIntersection(origin, direction, b.position, 1.0) != null) {
+            if(raySphereIntersection(origin, direction, b.position, 0.5) != null) {
                 var ball = b.get(Ball);
                 ball.hp--;
 
