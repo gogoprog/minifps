@@ -21,8 +21,8 @@ retail: compile
 	cat src/after.html >> build/index.html
 	rm -rf retail
 	mkdir -p retail
-	terser --compress unsafe_arrows=true,unsafe=true,toplevel=true,passes=8 --mangle --mangle-props --toplevel --ecma 6 -O ascii_only=true -- temp/main.js > temp/main.min.js
-	# terser --compress toplevel=true,passes=2 --ecma 6 -O ascii_only=true -- temp/main.js > temp/main.min.js
+	# terser --compress unsafe_arrows=true,unsafe=true,toplevel=true,passes=8 --mangle --mangle-props --toplevel --ecma 6 -O ascii_only=true -- temp/main.js > temp/main.min.js
+	terser --compress toplevel=true,passes=2 --ecma 6 -O ascii_only=true -- temp/main.js > temp/main.min.js
 	# terser --compress toplevel=true,passes=2 --ecma 6 -O ascii_only=true -- temp/main.js > temp/main.min.js
 	# cp temp/main.js temp/main.min.js
 	# regpack temp/main.min.js > temp/main.min.regpack.js

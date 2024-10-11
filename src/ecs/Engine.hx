@@ -35,6 +35,12 @@ class System {
     public function updateEntity(e:Entity, dt:Float) {
     }
 
+    public function onEnable() {
+    }
+
+    public function onDisable() {
+    }
+
     public function requires<T>(componentClass:Class<T>) {
         componentClasses.push(componentClass);
     }
@@ -56,6 +62,7 @@ class Engine {
 
         if(!enabledSystems.contains(target_system)) {
             enabledSystems.push(target_system);
+            target_system.onEnable();
         }
     }
 
@@ -63,6 +70,7 @@ class Engine {
         var target_system:System = getSystem(systemClass);
 
         if(enabledSystems.contains(target_system)) {
+            target_system.onDisable();
             enabledSystems.remove(target_system);
         }
     }

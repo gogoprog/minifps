@@ -60,6 +60,8 @@ class PlayerGunSystem extends ecs.System {
                 var ball = b.get(Ball);
                 ball.hp--;
 
+                Game.spawnParticles(b.position, 16);
+
                 if(ball.hp <= 0) {
                     engine.remove(b);
                     Audio.sfx(1.1, .05, 53, .05, .29, .33, 0, 2, 7, 0, 0, 0, 0, 2, 0, .9, 0, .32, .14, 0, 0);

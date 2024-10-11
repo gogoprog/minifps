@@ -20,6 +20,8 @@ function main() {
     var worldModel = new ModelData(buffer);
     var cross = ModelData.createQuad(0.01, 0.01);
     cross.texture = Renderer.createText("+", 16, 16);
+
+
     game.Game.init();
     function loop(t:Float) {
         if(!windowIsVisible) {

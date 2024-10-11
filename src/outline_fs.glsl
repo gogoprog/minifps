@@ -28,16 +28,9 @@ void main() {
 
         float other_depth = linearize_depth(texelFetch(depthSampler, icoord, 0).r);
 
-        if (abs(depth - other_depth) > 2.0) {
+        if (abs(depth - other_depth) > 2.0 * other_depth / 10.0) {
             color = vec4(0.0, 0.0, 0.0, 1.0);
             break;
-        }
-
-        if (depth < 2.0) {
-            if (abs(depth - other_depth) > 0.2) {
-                color = vec4(0.0, 0.0, 0.0, 1.0);
-                break;
-            }
         }
     }
 

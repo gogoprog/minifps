@@ -1,6 +1,5 @@
 package game;
 
 class Ball {
-    public var hp = 10;
-
+    public var hp = 4;
 }

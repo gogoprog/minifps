@@ -65,4 +65,12 @@ class World {
         var pos = map.allZones[0].getCenter();
         return [pos.x, 0, pos.y];
     }
+
+    inline static public function getCenter():math.Vector3 {
+        return [map.width*0.5, 0, map.height *0.5];
+    }
+
+    inline static public function getMap() {
+        return map;
+    }
 }

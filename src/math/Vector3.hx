@@ -5,6 +5,7 @@ abstract Vector3(Array<Float>) from Array<Float> to Array<Float> {
     public function new(x, y, z) {
         this = [x, y, z];
     }
+
     public var x(get, set):Float;
     inline function get_x() return this[0];
     inline function set_x(value) return this[0] = value;
@@ -53,7 +54,7 @@ abstract Vector3(Array<Float>) from Array<Float> to Array<Float> {
         var cosinus = Math.cos(angle);
         var sinus = Math.sin(angle);
 
-        return new Vector3(vector.x * cosinus - vector.y * sinus, 0, vector.x * sinus + vector.y * cosinus);
+        return new Vector3(vector.x * cosinus - vector.z * sinus, 0, vector.x * sinus + vector.z * cosinus);
     }
 
     public function normalize() {
