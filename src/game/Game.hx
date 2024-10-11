@@ -22,6 +22,7 @@ class Game {
                 engine.add(e);
             }
         }
+
         {
             var data = Macros.getFileContent("data/Pistol_02.obj");
             var buffer = ObjLoader.load(data);
@@ -41,26 +42,14 @@ class Game {
             e.add(PlayerGun);
             engine.add(e);
         }
+
         {
             var e = new ecs.Entity();
             e.add(Player);
             e.position = new math.Vector3(0.0, 0.0, 0.0);
             engine.add(e);
         }
-        {
-            var data = Macros.getFileContent("data/Pig.obj");
-            var buffer = ObjLoader.load(data);
-            var model = new ModelData(buffer);
 
-            for(i in 0...100) {
-                var e = new ecs.Entity();
-                e.add(Model).modelData = model;
-                e.position = new math.Vector3(Std.random(10) * 10, 0, Std.random(10) * 10);
-                e.scale = 0.05;
-                e.pitch = 0;
-                engine.add(e);
-            }
-        }
         {
             var data = Macros.getFileContent("data/ball.obj");
             var buffer = ObjLoader.load(data);
@@ -76,6 +65,7 @@ class Game {
             }
         }
     }
+
     static public function update(dt:Float) {
         engine.update(dt);
     }

@@ -5,6 +5,7 @@ extern private class Shim {
     @:native("c") static var canvas:js.html.CanvasElement;
     @:native("g") static var g:Dynamic;
 }
+
 var gl:Dynamic;
 var globalYaw = 0.0;
 var globalPitch = 0.0;
@@ -107,20 +108,34 @@ class Renderer {
     }
 
     inline static public function init() {
-        Shim.canvas.width = 800;
-        Shim.canvas.height = 600;
         js.Syntax.code(" for(i in g=c.getContext(`webgl2`)) { g[i[0]+i[6]]=g[i]; } ");
         gl = Shim.g;
         gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.BLEND);
-        gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         gl.disable(gl.CULL_FACE);
+        {
+            var w = js.Browser.window.innerWidth;
+            var h = js.Browser.window.innerHeight;
+            resize(w, h);
+            var b = js.Browser.document.body;
+            b.onresize = function(e) {
+                var w = js.Browser.window.innerWidth;
+                var h = js.Browser.window.innerHeight;
+                resize(w, h);
+            };
+
+            b.style.border = "0";
+            b.style.padding = "0";
+            b.style.margin = "0";
+        }
+
         {
             outlineProgram = createProgram2(Macros.getFileContent("src/outline_vs.glsl"), Macros.getFileContent("src/outline_fs.glsl"));
             screenSamplerUniformLocation = gl.getUniformLocation(outlineProgram, "screenSampler");
             depthSamplerUniformLocation = gl.getUniformLocation(outlineProgram, "depthSampler");
         }
+
         {
             var vs_src = Macros.getFileContent("src/vs.glsl");
             var fs_src = Macros.getFileContent("src/fs.glsl");
@@ -138,26 +153,10 @@ class Renderer {
             resolutionUniformLocation = gl.getUniformLocation(program, "uResolution");
             useTextureUniformLocation = gl.getUniformLocation(program, "uUseTexture");
             mainSamplerUniformLocation = gl.getUniformLocation(program, "mainSampler");
-            gl.uniform2f(resolutionUniformLocation, Shim.canvas.width, Shim.canvas.height);
             positionLocation = gl.getAttribLocation(program, 'aPosition');
             normalLocation = gl.getAttribLocation(program, 'aNormal');
             texCoordLocation = gl.getAttribLocation(program, 'aTexCoord');
         }
-        mainFramebuffer = gl.createFramebuffer();
-        gl.bindFramebuffer(gl.FRAMEBUFFER, mainFramebuffer);
-        mainTexture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, mainTexture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, Shim.canvas.width, Shim.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, mainTexture, 0);
-        depthTexture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, depthTexture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT24, Shim.canvas.width, Shim.canvas.height, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTexture, 0);
-        gl.checkFramebufferStatus(gl.FRAMEBUFFER);
     }
 
     inline static public function setCamera(position:math.Vector3, yaw, pitch) {
@@ -169,6 +168,7 @@ class Renderer {
     inline static public function preRender() {
         useProgram(program);
         // gl.uniform1f(timeUniformLocation, t);
+        gl.uniform2f(resolutionUniformLocation, Shim.canvas.width, Shim.canvas.height);
         gl.uniform3f(cameraPositionUniformLocation, cameraPosition[0], cameraPosition[1], cameraPosition[2]);
         gl.uniform1f(cameraYawUniformLocation, cameraYaw);
         gl.uniform1f(cameraPitchUniformLocation, cameraPitch);
@@ -248,7 +248,27 @@ class Renderer {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-        js.Browser.document.body.appendChild(cast textCtx.canvas);
         return result;
+    }
+
+    inline static public function resize(w, h) {
+        Shim.canvas.width = w;
+        Shim.canvas.height = h;
+        mainFramebuffer = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, mainFramebuffer);
+        mainTexture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, mainTexture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, Shim.canvas.width, Shim.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, mainTexture, 0);
+        depthTexture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, depthTexture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT24, Shim.canvas.width, Shim.canvas.height, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTexture, 0);
+        gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+        gl.viewport(0, 0, w, h);
     }
 }
