@@ -4,12 +4,13 @@ package ecs;
 class System {
     private var engine:Engine;
     private var componentClasses:Array<Class<Dynamic>> = [];
+    public var entities:Array<Entity> = [];
 
     public function new() {
     }
 
     public function update(dt) {
-        var selection = [];
+        entities.resize(0);
 
         for(e in engine.entities) {
             var correct = true;
@@ -22,11 +23,11 @@ class System {
             }
 
             if(correct) {
-                selection.push(e);
+                entities.push(e);
             }
         }
 
-        for(e in selection) {
+        for(e in entities) {
             updateEntity(e, dt);
         }
     }
@@ -74,7 +75,7 @@ class Engine {
         entities.remove(entity);
     }
 
-    private function getSystem<T:ecs.System>(systemClass:Class<T>) {
+    public function getSystem<T:ecs.System>(systemClass:Class<T>) {
         var target_system:System = null;
 
         for(system in allSystems) {
@@ -87,6 +88,7 @@ class Engine {
         if(target_system == null) {
             target_system = Type.createInstance(systemClass, []);
             target_system.engine = this;
+            allSystems.push(target_system);
         }
 
         return target_system;

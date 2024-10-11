@@ -10,5 +10,11 @@ class Zone {
 
     public function new() {
     }
+
+    public function getCenter():math.Vector2 {
+        return new math.Vector2(
+            rect.x + rect.width/2, rect.y + rect.height /2
+        );
+    }
 }
 

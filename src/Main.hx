@@ -15,15 +15,16 @@ function main() {
     untyped window.onblur = (e) -> { windowIsVisible = false; };
     Renderer.init();
     Input.init();
-    game.Game.init();
     var data = Macros.getFileContent("data/Pistol_02.obj");
     var buffer = World.load();
     var worldModel = new ModelData(buffer);
     var cross = ModelData.createQuad(0.01, 0.01);
     cross.texture = Renderer.createText("+", 16, 16);
+    game.Game.init();
     function loop(t:Float) {
         if(!windowIsVisible) {
             js.Browser.window.setTimeout(function() {loop(t+1);}, 1000);
+
             return;
         }
 
@@ -40,5 +41,6 @@ function main() {
         Input.update();
         js.Browser.window.requestAnimationFrame(loop);
     }
+
     js.Browser.window.requestAnimationFrame(loop);
 }

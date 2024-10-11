@@ -10,6 +10,17 @@ class Entity {
     public function new() {
     }
 
+    public inline function getDirection():math.Vector3 {
+        var yaw = this.yaw + Math.PI/2;
+
+        var result = new math.Vector3(
+            Math.cos(pitch) * Math.cos(yaw),
+            -Math.sin(pitch),
+            -Math.cos(pitch) * Math.sin(yaw),
+        );
+        return result;
+    }
+
     public function add<T>(componentClass:Class<T>):T {
         var instance = Type.createInstance(componentClass, []);
         components[Type.getClassName(componentClass)] = instance;
@@ -27,4 +38,5 @@ class Entity {
     public function get<T>(componentClass:Class<T>):T {
         return components.get(Type.getClassName(componentClass));
     }
+
 }

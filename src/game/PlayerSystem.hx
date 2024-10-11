@@ -29,6 +29,8 @@ class PlayerSystem extends ecs.System {
         cameraYaw -= mouseMove[0] * mouseSensitivity;
         cameraPitch += mouseMove[1] * mouseSensitivity;
         cameraPitch = Math.max(Math.min(cameraPitch, Math.PI / 2), -Math.PI / 2);
+        e.yaw = cameraYaw;
+        e.pitch = cameraPitch;
         var dirX = Math.cos(cameraPitch) * Math.sin(cameraYaw);
         var dirY = Math.sin(cameraPitch);
         var dirZ = Math.cos(cameraPitch) * Math.cos(cameraYaw);

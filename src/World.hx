@@ -8,7 +8,7 @@ var triangles = new Array<math.Triangle>();
 class World {
     inline static public function load():DataBuffer {
         var buffer = new DataBuffer(2048);
-        var size = 100;
+        var size = 1000;
         var tsize = 100;
 
         var n = new math.Vector3(0, 1, 0);
@@ -59,5 +59,10 @@ class World {
         }
 
         return result;
+    }
+
+    inline static public function getStartPosition():math.Vector3 {
+        var pos = map.allZones[0].getCenter();
+        return [pos.x, 0, pos.y];
     }
 }
